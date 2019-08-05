@@ -1,0 +1,531 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{enumerate}
+\newtheorem{law}{定理}[section]
+\newtheorem{lemma}{引理}[section]
+\begin{document}
+\pagestyle{headings}
+\title{概率论从挂科到重修}
+\author{Velen~Kong
+%\thanks{Professer Zhao}
+}
+\maketitle
+\begin{abstract}
+这个系列主要是出于随机过程期末考的爆炸遭遇，果然跳过一年的数学课还是有点勉强，拿到了大一最差数学成绩。于是打算重新复习（预习？）一遍概率论，主要基于
+
+(美) Ross S.M.著. A First Course in Probability 概率论基础教程(原书第9版) [M] 童行伟 \& 梁宝生.译. 北京:机械工业出版社 2014
+
+也可能涉及
+
+(美) Bertsekas D.P. \& Tsitsiklis J.N.著. Introduction to Probability 概率导论(第二版) [M] 郑中国 \& 童行伟.译. 北京:人民邮电出版社 2009
+
+(俄) Shiryaev A.N.著. Probability-1 概率:第一卷(修订和补充第三版) [M] 周概容.译. 北京:高等教育出版社 2007。
+
+（如果有时间也许会顺手往下写随机过程的续集，嗯，一定不会咕咕咕）\\
+\end{abstract}
+
+\section{绪论}
+绪论就不写具体内容了，简单写一下概率的现代测度定义吧，看不懂也不影响学基础概率论。
+定义 设$\Omega $是一个非空集合，$\mathcal{F}$是$\Omega $中的子集类，如果满足：\\
+(1) $\emptyset ,\Omega \in \mathcal{F};$\\
+(2) 若$A\in \mathcal{F},A^{c}\in \mathcal{F}$\\
+(3) 若$A_{1},A_{2},\ldots \in \mathcal{F},\bigcup_{i=1}^{\infty}A_{i}\in \mathcal{F}$\\
+
+那么称$\mathcal{F}$是$\Omega$上的$\sigma$-代数，称$(\Omega ,\mathcal{F})$为可测空间。\\
+
+再设映射$\mathbb{P}:\mathcal{F}\to [0,1]$，如果满足：\\
+(1) $\mathbb{P}(\Omega )=1$\\
+(2) 若$A_{1},A_{2},\ldots \in \mathcal{F}$两两互斥，则$$\mathbb{P}(\bigcup_{i=1}^{\infty}A_{i}) = \sum_{i=1}^{\infty}\mathbb{P}(A_{i})$$
+
+则称$\mathbb{P}$是$(\Omega ,\mathcal{F})$上的概率测度，称$(\Omega ,\mathcal{F},\mathbb{P})$是概率空间。\\
+
+其实理解起来也不是很难。首先是可测空间，空集和全集肯定需要可测，然后如果某个事件的概率可测，那相反的事件概率肯定也可测，并且一些可测子集的并同样可测。例如最简单的非平凡概率空间，其可测空间只有一个事件：
+$$\mathcal{F}=\{\emptyset ,\Omega ,A,\overline{A} \}$$
+然后再让概率满足全集映射到$1$，互斥事件概率具有可列可加性即可。在上述非平凡概率空间中，测度$\mathbb{P}$为
+$$\mathbb{P}(\emptyset)=0,\mathbb{P}(\Omega)=1$$
+$$\mathbb{P}(A)=p,\mathbb{P}(\overline{A})=1-p$$
+
+几何概率空间则是一个相对而言更加抽象的例子，设$\Omega =(a,b)$,$\mathcal{F}$是由$\Omega$中所有开集生成的$\sigma$-代数。令$m$是$(\Omega ,\mathcal{F})$的Lebesgue测度，对$A\in \mathcal{F}$
+
+$$\mathbb{P}(A)=\frac{m(A)}{b-a}$$
+
+那么称$(\Omega ,\mathcal{F},\mathbb{P})$是一个几何概率空间。其中Lebesgue测度可以简单理解为$$m(c,d)=d-c,\quad (c,d)\subseteq (a,b)$$
+
+接下来我们从测度出发来定义随机变量，逐渐开始不讲人话。\\
+
+定义 设$(\Omega ,\mathcal{F})$和$(\Omega^{\prime},\mathcal{F}^{\prime})$是给定的两个可测空间，$\xi$是$\Omega$到$\Omega^{\prime}$上的映射。如果对任何$A\in \mathcal{F}^{\prime}$有$\xi^{-1}(A)\in \mathcal{F}^{\prime}$，则称$\xi$为可测映射。\\
+
+特别地，当$(\Omega^{\prime},\mathcal{F}^{\prime})=(\mathbb{R},\mathcal{B})$时，称$\xi$为可测函数，也叫做随机变量。\\
+
+其中$\mathcal{B}$是${R}$上的Borel代数。Borel代数属于实变函数内容了，大概就是包含所有开集的最小$\sigma$-代数。\\
+
+定义 设$\xi :\Omega \to \mathbb{R}, \sigma (\xi) = \xi^{-1}(\mathcal{B})$称为由$\xi$生成的$\sigma$-代数。它是令$\xi$成为随机变量的最小$\sigma$-代数。\\
+
+更一般地，设$T$是一个指标集，对$i\in T$，有$\xi_{i}:\Omega \to \mathbb{R}$。
+
+记$\sigma (\xi_{i}:i\in T) = \sigma \{\xi_{i}^{-1}(\mathcal{B}):i\in T\}$
+
+这即是由$\{\xi_{i}^{-1}:i\in T\}$生成的$\sigma$-代数，它是使得所有$\xi_{i}(i\in T)$成为随机变量的最小$\sigma$-代数。\\
+
+可以粗略理解为将每一个事件映射到实数集上从而形成一个随机变量，如果被映射到的是整数集，那么就相当于离散型随机变量。\\
+
+搞这么麻烦就是为了给概率一个抽象而精确的数学定义，从测度论开始概率算是脱离了玄学进入了现代数学，这点上概率与统计不同。然而这对于概率论基础学习而言其实并没有什么卵用，我自己到现在也没有完全明白，单纯用来水一下绪论。
+
+\section{概率公理和条件概率}
+
+\subsection{组合分析入门}
+
+组合分析(combinatorial analysis)是关于计数的数学理论，也是高中接触到的概率论内容。入门比较简单，这里列一下知识点，不知道的请自行百度。
+
+计数的加法原理和乘法原理、排列计算、组合计算、二项式定理、简单不定方程非负整数解。
+
+其中提一下组合计算，如果将$n$个元素分成大小为$n_{1},n_{2},\ldots$的组，不同组合数为
+$$\binom{n}{n_{1},n_{2},\ldots}=\frac{n!}{n_{1}!n_{2}!\ldots}$$
+
+从而有二项式定理的推广，多项式定理
+$$(x_{1} + x_{2} + \ldots )^{n}=\sum_{\sum n_{i}=n}\binom{n}{n_{1},n_{2},\ldots} x_{1}^{n_{1}}x_{2}^{n_{2}}\ldots $$
+
+最后列几个组合恒等式，证明读者可留作习题
+$$k\displaystyle\binom{n}{k}=(n-k+1)\binom{n}{k-1}=n\binom{n-1}{k-1}$$
+
+$$\displaystyle\binom{2n}{n}=\sum\limits_{k=0}^{n}\binom{n}{k}^{2}$$
+
+$$\displaystyle\binom{n}{k}=\sum\limits_{i=k}^{n}\binom{i-1}{k-1}\quad n\geq k \quad \text{(费马组合恒等式)}$$
+
+$$\displaystyle\sum\limits_{k=1}^{n}\binom{n}{k}k=2^{n-1}n$$
+
+$$\displaystyle\sum\limits_{k=1}^{n}\binom{n}{k}k^{2}=2^{n-2}n(n+1)$$
+
+$$\displaystyle\sum\limits_{k=1}^{n}\binom{n}{k}k^{3}=2^{n-3}n^{2}(n+3)$$
+
+$$\displaystyle\binom{n}{n_{1},n_{2},\ldots}=\binom{n-1}{n_{1}-1,n_{2},\ldots}+\binom{n-1}{n_{1},n_{2}-1,\ldots}+\ldots $$
+
+$$\displaystyle\sum\limits_{x_{1}+\ldots+x_{r}}\frac{n!}{x_{1}!x_{2}!\ldots x_{r}!}=r^{n}\quad \text{(考虑r个字母组成长度为n的序列种数)}$$
+
+\subsection{概率论公理}
+
+如果看懂了绪论里的测度论基础可以跳过这一部分。如果没有看懂，这一节会用比较简单的方式定义概率。
+
+我们把一个随机事件所有可能的结果构成的集合称为样本空间(sample space)，记为$S$。把样本空间的任一子集$E$称为事件(event)。
+
+从而定义交(intersection)、并(union)、补(complement)、互斥(mutually exclusive)。同时这些事件集合自然满足容斥原理以及交并补运算的德摩根律(De Morgan Law)。
+
+然后我们假定概率论的三大公理
+
+(1) $0\leq P(E) \leq 1$
+
+(2) $P(S) = 1$
+
+(3) 对于互不相容的事件$E_{1},E_{2},\ldots $有
+
+$$P(\bigcup_{i=1}^{\infty} E_{i})=\sum_{i=1}^{\infty} P(E_{i}) $$
+
+实际上概率论的公理是以
+$$P(E)=\mathop{lim}\limits_{n\to \infty }\frac{n(E)}{n}$$
+
+作为理论的基础前提的，其中$n(E)$是$n$次实验中，事件$E$发生的次数。因而在测度论出现之前，概率和统计半斤八两，都是玄学，不过如今的概率已经有了严格的抽象理论，统计依然处于鄙视链底端(统计学子暴哭)。\\
+
+接下来介绍一个有趣的悖论。假设有个无限大的箱子，以及无限个按照正整数编号的球，先考虑第一个实验。
+
+实验一：在离午夜十二时差1秒时放入1-10号球，然后把10号球拿出来；在差$\frac{1}{2}$秒时放入11-20号球，然后把20号球拿出来$\ldots $
+
+那么显然，最后箱子子里有无限个球。
+
+实验二：在离午夜十二时差1秒时放入1-10号球，然后把1号球拿出来；在差$\frac{1}{2}$秒时放入11-20号球，然后把2号球拿出来$\ldots $
+
+最后结果是只剩下了一个空箱子，因为任何某个球都会被拿出。详细的严谨证明大概需要用到一定的分析学知识，取出的球和放入的球之间能形成一一对应。
+
+到现在为止似乎都很简单，那么我们来看最后一个实验。
+
+实验三：在离午夜十二时差1秒时放入1-10号球，然后随机把箱子里的一个球拿出来；在差$\frac{1}{2}$秒时放入11-20号球，然后再随机把箱子里的一个球拿出来$\ldots $
+
+要知道实验三的最后剩下了几个球，我们需要先证明概率论的一条基本定理。
+
+定义 事件序列如果满足
+$$E_{1}\subset E_{2} \subset \ldots $$
+
+那么称其为递增事件序列。
+
+同样我们可以定义递减事件序列为
+$$E_{1}\supset E_{2} \supset \ldots $$
+
+对于递增序列，定义
+$$\mathop{lim}\limits_{n\to \infty}P(E_{n})=\bigcup_{i=1}^{\infty}E_{i} $$
+
+同样地，对于递减序列定义
+$$\mathop{lim}\limits_{n\to \infty}P(E_{n})=\bigcap_{i=1}^{\infty}E_{i} $$
+
+那么我们有以下定理成立
+
+$$\mathop{lim}\limits_{n\to \infty}P(E_{n})=P(\mathop{lim}\limits_{n\to \infty}E_{n}) $$
+
+证明 对于递增序列$\{E_{n}\}$，我们定义事件序列$\{F_{n}\}$为
+$$F_{1}=E_{1}$$
+$$F_{n}=E_{n}(\bigcup_{i=1}^{n-1}E_{i} )^{c}=E_{n}E_{n-1}^{c},\quad n>1$$
+
+显然，$\{F_{n}\}$是一系列互斥事件，同时满足
+$$\bigcup_{i=1}^{n}F_{i}=\bigcup_{i=1}^{n}E_{i},\qquad n\geq 1$$
+
+因此
+$$\begin{aligned}
+P(\bigcup_{i=1}^{\infty }E_{i})&=P(\bigcup_{i=1}^{\infty }F_{i})=\sum_{i=1}^{\infty }P(F_{i})\\
+=&\mathop{lim}\limits_{n\to \infty }\sum_{i=1}^{n}P(F_{i})=\mathop{lim}\limits_{n\to \infty }P(\bigcup_{i=1}^{n}F_{i})\\
+=&\mathop{lim}\limits_{n\to \infty}P(\bigcup_{i=1}^{n}E_{i})=\mathop{lim}\limits_{n\to \infty}P(E_{n})
+\end{aligned}$$
+
+对于递减序列同理可证。
+
+回到实验三，我们考虑1号球第n次操作后还在箱子里的概率
+$$P(E_{n})=\frac{9\times 18 \times 27\ldots (9n)}{10\times 19 \times 28\ldots (9n+1)}$$
+
+由于之前所证的定理，1号球午夜还在箱子里的概率为
+$$P(\bigcap_{n=1}^{\infty }E_{n})=\mathop{lim}\limits_{n\to \infty }P(E_{n})=\prod_{n=1}^{\infty }(\frac{9n}{9n+1})$$
+
+又因为
+$$\begin{aligned}
+\prod_{n=1}^{\infty }(\frac{9n+1}{9n})&\geq \prod_{n=1}^{m}(1+\frac{1}{9n})\\
+>&\frac{1}{9}+\frac{1}{18}+\ldots +\frac{1}{9m}\\
+=&\frac{1}{9}\sum_{i=1}^{m}\frac{1}{i}
+\end{aligned}$$
+
+所以极限概率$P(F_{i})=0$，而整个箱子非空的概率为$P(\bigcup_{i=1}^{\infty }F_{i})$，利用布尔不等式可得
+$$P(\bigcup_{i=1}^{\infty }F_{i})\leq \sum_{i=1}^{\infty }P(F_{i})=0$$
+
+由此我们证明了实验三最终箱子将为空。
+
+\subsection{条件概率和独立性}
+
+假定$F$发生的条件下$E$发生的条件概率为$P(E|F)$，那么可以有
+
+定义 对$P(F)>0$，$$P(E|F)=\frac{P(EF)}{P(F)}$$
+
+接下来对条件概率的定义做推广，很自然地得到乘法法则
+$$P(E_{1}E_{2}E_{3}\ldots )=P(E_{1})P(E_{2}|E_{1})P(E_{3}|E_{1}E_{2})\ldots $$
+
+然后我们介绍条件概率的一大应用——贝叶斯公式。
+
+首先我们设$E$和$F$两个事件，我们有
+$$E=EF\cup EF^{c}$$
+
+所以可以得到
+$$\begin{aligned}
+P(E)&=P(EF)+P(EF^{c})\\
+&=P(E|F)P(F)+P(E|F^{c})(1-P(F))
+\end{aligned}$$
+
+推广后可得全概率公式，令$\{F_{n}\}$表示一系列互斥且穷举的事件
+$$P(E)=\sum_{i=1}^{n}P(EF_{i})=\sum_{i=1}^{n}P(E|F_{i})P(F_{i}) $$
+
+然后我们有贝叶斯公式，令$\{F_{n}\}$表示一系列互斥且穷举的事件
+$$P(F_{j}|E)=\frac{P(EF_{j})}{P(E)}=\frac{P(EF_{j})}{\sum\limits_{i=1}^{n}P(E|F_{i})P(F_{i})}$$
+
+接下来举一个条件概率的应用例子。
+
+某次桥牌比赛上，A和B被指控作弊，控方认为其打的牌与作弊通牌的情况下打的牌是一样的，就像开了上帝视角。辩方认为他们的打法没有作弊的情况下也是最优解。假设控辩双方都是正确的，那么A和B完美的出牌这一项证据能否增大其作弊的概率呢？
+
+答案显然是不能，因为在不作弊的情况下这也是完美打法。我们令$H$是某个假设(如A和B作弊)，令$E$表示某项证据，那么
+$$\begin{aligned}
+P(H|E)&=\frac{P(HE)}{P(E)}\\
+&=\frac{P(E|H)P(H)}{P(E|H)P(H)+P(E|H^{c})P(H^{c})}\\
+&=\frac{P(H)}{P(H)+(1-P(H))\frac{P(E|H^{c})}{P(E|H)}}
+\end{aligned}$$
+
+由此，为了研究条件更新对事件概率的影响，我们定义优势比
+
+定义 事件$A$的优势比为
+$$\frac{P(A)}{P(A)^{c}}=\frac{P(A)}{1-P(A)}$$
+
+产生新的证据$E$后，假设$H$的新优势比为
+$$\frac{P(H|E)}{P(H|E^{c})}=\frac{P(H)P(E|H^{c})}{P(H^{c})P(E|H)}$$
+
+然后我们研究独立事件，如果
+$$P(EF)=P(E)P(F)$$
+
+那么称它们是独立的(independent)，否则称为相依的(dependent)。而要注意的是，三个事件之间的独立需要事件之间的任意组合都独立。
+
+如果某个试验的子试验都相互独立同分布，那么称其为重复试验。
+
+下面我们看一个重要的条件概率试验。
+
+假设盒子中有k+1枚硬币，同时第i枚硬币正面朝上的概率为$\frac{i}{k}$，那么从盒子中取出一枚硬币，连续n次正面朝上，求下一次正面朝上的概率。
+
+我们令$C_{i}$表示取出的是第i枚硬币，$F_{n}$表示前n次结果都为正面朝上，则所求的概率为
+$$P(H|F_{n})=\sum_{i=0}^{k}P(H|F_{n}C_{i})P(C_{i}|F_{n})$$
+
+那么对于第i枚硬币被取出的结果，我们有
+$$P(H|F_{n}C_{i})=\frac{i}{k}$$
+
+$$\begin{aligned}
+P(C_{i}|F_{n})&=\frac{P(C_{i}F_{n})}{P(F_{n})}\\
+&=\frac{P(F_{n}C_{i})}{\sum\limits_{j=0}^{k}P(F_{n}C_{j})P(C_{j})}\\
+&=\frac{(\frac{i}{k})^{n}\frac{1}{k+1}}{\sum\limits_{j=0}^{k}(\frac{j}{k})^{n}\frac{1}{k+1}}
+\end{aligned}$$
+
+因此
+$$P(H|F_{n})=\frac{\sum\limits_{i=0}^{k}(\frac{i}{k})^{n+1}}{\sum\limits_{j=0}^{k}(\frac{j}{k})^{n}}$$
+
+当$k\to \infty$时，利用积分近似得
+$$\frac{1}{k}\sum\limits_{i=0}^{k}(\frac{i}{k})^{n+1}\approx \int_{0}^{1}x^{n+1}dx=\frac{1}{n+2}$$
+
+$$\frac{1}{k}\sum\limits_{j=0}^{k}(\frac{j}{k})^{n}\approx \int_{0}^{1}x^{n}dx=\frac{1}{n+1}$$
+
+所以对于$k\to \infty$有
+$$P(H|F_{n})=\frac{n+1}{n+2}$$
+
+这个试验被称为拉普拉斯继承准则，将其抽象为对于$n$个互斥且穷举的假设，其先验(piror)概率(初始概率)为$P(H_{i})$，然后由贝叶斯公式得知事件$E$发生后的后验(posterior)概率.
+
+另外我们可以得知事件$E_{1}$和$E_{2}$发生后的后验(posterior)概率为
+$$P(H_{i}|E_{1}E_{2})=\frac{P(E_{1}E_{2}|H_{i})P(H_{i})}{\sum\limits_{j}P(E_{1}E_{2}|H_{j})P(H_{j})}$$
+
+前提是$E_{1}$和$E_{2}$对于$H_{j}$条件独立。
+
+\section{离散型随机变量}
+
+\subsection{基本概念}
+
+如果不考虑测度论，那么我们可以简单地把定义在样本空间上的实值函数称为随机变量(random variable)。然后得到分布函数(cumulative distribution function)
+$$F(x)=P(X\leq x),\qquad -\infty <x<\infty $$
+
+如果一个随机变量的可能取值是至多可数的，那么称为离散型随机变量。对于一个离散型随机变量$X$我们定义概率分布列(probability mass function)
+$$p(a)=P(X=a)$$
+
+$$\sum_{i}p(x_{i})=1$$
+
+定义期望为
+$$E(X)=\sum_{x:p(x)>0}xp(x) $$
+
+同时容易证明
+$$\begin{aligned}
+E(g(X))&=\sum_{i}g(x_{i})p(x_{i})=\sum_{j} \sum_{i:g(x_{i})=y_{j}}y_{j}p(x_{i})\\
+&=\sum_{j}y_{i}P(g(X)=y_{i})=E(g(X))\\
+\end{aligned}$$
+
+同时期望满足线性关系
+$$E(aX+b)=aE(X)+b$$
+
+随机变量期望的和与它们和的期望相等
+$$E(\sum_{i=1}^{n}X_{i})=\sum_{i=1}^{n}E(X_{i})$$
+
+期望也被称为一阶矩(first moment)。接下来介绍二阶矩，也就是方差(variance)。
+
+定义 随机变量的方差为
+$$Var(X)=E((X-\mu )^{2})=E(X^{2})-(E(X))^{2}$$
+
+方差满足
+$$Var(aX+b)=a^{2}Var(X)$$
+
+定义 随机变量的标准差(standard deviation)为
+$$SD(X)=\sqrt{Var(X)} $$
+
+\subsection{二项随机变量}
+
+假设$n$次试验，每次成功的概率为$p$，用随机变量$X$表示成功次数，那么称$X$是参数为$(1,p)$的二项(binomial)随机变量。其分布列为
+$$p(i)=\binom{n}{i} p^{i}(1-p)^{n-i} ,\qquad i=0,1,\ldots $$
+
+下面研究其一些性质，先计算期望和方差。
+$$E(X^{k})=\sum_{i=1}^{n}i^{k}\binom{n}{i}p^{i}(1-p)^{n-i} $$
+
+利用$i\binom{n}{i}=n\binom{n-1}{i-1} $可知
+$$\begin{aligned}
+E(X^{k})&=np\sum_{i=1}^{n}i^{k-1}\binom{n-1}{i-1}p^{i-1}(1-p)^{n-i}\\
+&=np\sum_{j=0}^{n-1}(j+1)^{k-1}\binom{n-1}{j}p^{j}(1-p)^{n-1-j}\\
+&=E((Y+1)^{k-1})\\
+\end{aligned} $$
+
+其中$Y$是参数为$(n-1,p)$的二项随机变量。分别令$k=1,k=2$可得
+$$E(X)=np$$
+
+$$E(X^{2})=np((n-1)p+1)$$
+
+$$Var(X)=np(1-p)$$
+
+同时我们可以递推计算二项分布函数
+$$P(X=k+1)=\frac{p}{1-p} \frac{n-k}{k+1}P(X=k)$$
+
+\subsection{Poisson随机变量}
+
+独立重复进行$n$次试验，每次成功概率为$p$，当$n$充分大而$p$非常小时，成功次数的分布接近参数为$\lambda =np$的Poisson分布。
+其中参数为$\lambda $的Poisson分布的分布列为
+$$p(i)=e^{-\lambda }\frac{\lambda^{i}}{i!}$$
+
+下面计算Poisson分布的期望和方差
+$$E(X)=\sum_{i=0}^{\infty }\frac{ie^{-\lambda }\lambda^{i}}{i!}=\lambda \sum_{j=0}^{\infty }e^{-\lambda}\frac{\lambda^{j}}{j!}=\lambda $$
+
+$$\begin{aligned}
+E(X^{2})&=\sum_{i=0}{\infty }\frac{i^{2}e^{-\lambda }\lambda^{i}}{i!}=\lambda \sum_{j=0}^{\infty }\frac{(j+1)e^{-\lambda }\lambda^{j}}{j!}\\
+&=\lambda (\sum_{j=0}^{\infty }\frac{je^{-\lambda }\lambda^{j}}{j!}+\sum_{j=0}^{\infty } \frac {e^{-\lambda } \lambda^{j}}{j!})=\lambda (\lambda +1)\\
+\end{aligned} $$
+
+$$Var(X)=\lambda $$
+
+接下来考虑$n$个事件，发生概率相互独立为$p_{i}$且都很小，则总发生次数近似于参数为$\sum\limits_{i=1}^{n} $的Poisson分布。这被称为Poisson范例，具体的Poisson过程分解与合成定理将会在随机过程中使用。
+
+Poisson随机变量有着严格且抽象的数学定义。对于一系列事件，如果存在正常数$\lambda $满足下列条件
+
+(1) 在任意长度为$h$的时间区间内恰好发生一个事件的概率为$\lambda h+o(h)$
+
+(2) 在任意长度为$h$的时间区间内发生两个及以上事件的概率为$o(h)$
+
+(3) 任意不相交的时间区间内发生的事件个数相互独立
+
+则称其为强度为$\lambda $的Poisson过程，在任何长度$t$的时间区间内，发生事件的个数是以$\lambda t$为参数的Poisson随机变量。
+
+证明过程思路比较清晰，我们考虑区间$(0,t)$，将其分成$n$份，我们有
+$$\begin{aligned}
+P(N(t)=k)&=P(\text{其中正好有}n\text{个子区间各发生一次事件})\\
+&+P(N(t)=k,\text{至少有一个区间多于一个事件})\\
+\end{aligned}$$
+
+将右边设为事件A和B
+$$\begin{aligned}
+P(B)&\leq P(\text{至少有一个区间多于一个事件})\\
+&\leq \sum_{i=1}^{n}P(\text{第}i \text{个区间多于一个事件})\\
+&=\sum_{i=1}^{n}o(\frac{t}{n})\\
+&=t\frac{o(\frac{t}{n})}{\frac{t}{n}}\\
+\end{aligned} $$
+
+所以对于$n\to \infty $我们有
+$$P(B)\to 0$$
+
+同时又有
+$$P(A)=\binom{n}{k}(\frac{\lambda t}{n}+o(\frac{t}{n}))^{k}(1-\frac{\lambda t}{n}-o(\frac{t}{n}))^{n-k} $$
+
+$$P(N(t)=k)=e^{-\lambda k}\frac{(\lambda t)^{k}}{k!} $$
+
+另外Poisson分布还有方便的递推计算公式
+$$\frac{P(X=i+1)}{P(X=i)}=\frac{\lambda }{i+1} $$
+
+\subsection{其他重要分布}
+
+在独立重复试验中，假设每次成功概率$p$，令$X$表示首次成功需要的试验次数，则
+$$P(X=n)=(1-p)^{n-1}p$$
+
+称$X$为参数为$p$的几何(geometric)随机变量，且
+
+$$E(X)=\frac{1}{p}$$
+
+$$Var(X)=\frac{1-p}{p^{2}}$$
+
+负二项(negative binomial)随机变量是几何随机变量的一种推广，$X$表示直到试验成功$r$次需要的次数，则
+$$P(X=n)=\binom{n-1}{r-1}p^{r}(1-p)^{n-r} $$
+
+$$\begin{aligned}
+E(X^{k})&=\sum_{n=r}^{\infty }n^{k}\binom{n-1}{r-1}p^{r}(1-p)^{n-r}\\
+&=\frac{r}{p}\sum_{n=r}^{\infty }n^{k-1}\binom{n}{r}p^{r+1}(1-p)^{n-1-(r-1)}\\
+&=\frac{r}{p}E((Y-1)^{k-1})\\
+\end{aligned}$$
+
+从而有
+
+$$E(X)=\frac{r}{p}$$
+
+$$Var(X)=\frac{r(1-p)}{p^{2}}$$
+
+接下来介绍超几何(hyper geometric)随机变量。箱子里有$m$个白球，$N-m$个黑球，从中随机无放回取出$n$个球，$X$表示取出的白球个数，那么有
+$$P(X=i)=\frac{\binom{m}{i}\binom{N-m}{n-i}}{\binom{N}{n}}\equiv P_{i}(N)$$
+
+这时候令$P_{i}(N)$最大，就得到一个合理估计，称为极大似然估计(maximum likelihood)。具体求解也很简单，对于超几何随机变量有
+$$\frac{P_{i}(N)}{P_{i-1}(N)}=\frac{(N-m)(N-n)}{N(N-m-n+i)}$$
+
+显然在$N\leq \frac{mn}{i}$时$P_{i}(N)$单调递增，之后单调递减，所以满足此式的最大整数就是$N$的极大似然估计。
+
+对于超几何随机变量，我们有
+$$\begin{aligned}
+E(X^{k})&=\sum_{i=0}^{n}i^{k}P(X=i)=\sum_{i=1}^{n}i^{k}\frac{\binom{m}{i} \binom{N-m}{n-i}}{\binom{N}{n}}\\
+&=\frac{nm}{N}\sum_{i=1}^{n}i^{k-1}\frac{\binom{m-1}{i-1}\binom{N-m}{n-i}}{\binom{N-1}{n-1}}\\
+&=\frac{nm}{N}E((Y+1)^{k-1})\\
+\end{aligned}$$
+
+所以
+$$E(X)=\frac{nm}{N}$$
+
+$$Var(X)=np(1-p)(1-\frac{n-1}{N-1})$$
+
+当$N$对于$n$很大时，可以近似为二项随机变量。
+
+然后介绍一个重要的分布——$\zeta $分布。
+
+先介绍$Riemann\zeta $函数
+$$\zeta (s)=\sum_{i=1}^{\infty } (\frac{1}{i})^{s}$$
+
+接下来我们令
+$$P(X=k)=C\frac{1}{k^{\alpha +1}},\qquad k=1,2,\ldots $$
+
+其中
+$$C=(\zeta (s))^{-1}=(\sum_{k=1}^{\infty } (\frac{1}{k})^{s})^{-1}$$
+
+\section{连续型随机变量}
+
+\subsection{基本概念}
+
+如果存在一个非负函数$f$满足对于任何实数集B，都有
+$$P(X\in B)=\int_{B}f(x)dx $$
+
+那么称$X$为连续型(continuous)随机变量，$f$为随机变量$X$的概率密度函数(probability density function)。
+
+由定义知连续型随机变量取任何固定值的概率都为$0$。
+
+类似于离散型随机变量，我们定义连续型随机变量的期望和方差为
+$$E(X)=\int_{-\infty }^{\infty }xf(x)dx $$
+
+同理有
+$$E(g(X))=\int_{-\infty }^{+\infty }g(x)f(x)dx $$
+
+为了证明上述公式，我们需要先证明对于非负随机变量$Y$
+$$E(Y)=\int_{0}^{\infty }P(Y>y)dy $$
+
+$$\begin{aligned}
+\int_{0}^{\infty }(Y>y)dy&=\int_{0}^{\infty }\int_{y}^{\infty }f_{Y}(x)dxdy\\
+&=\int_{0}^{\infty } \int_{0}^{x}dy~f_{Y}(x)dx \\
+&=E(Y) \\
+\end{aligned} $$
+
+由此我们可以简单证明对于某个非负函数$g(x)$
+$$\begin{aligned}
+E(g(X))&=\int_{0}^{\infty }P(g(x)>y)dy\\
+&=\int_{0}^{\infty }\int_{x:g(x)>y}f(x)dxdy\\
+&=\int_{x:g(x)>y} \int_{0}^{\infty }dy~f(x)dx\\
+&=\int_{-\infty }^{+\infty }g(x)f(x)dx\\
+\end{aligned} $$
+
+同样，离散型随机变量的期望和方差定义及运算法则也适用于连续型随机变量。
+
+\subsection{均匀随机变量}
+
+如果随机变量$X$的密度函数为
+$$f(x)=\left \{
+\begin{array}{ll}
+1&\qquad 0<x<1\\
+0&\qquad others\\
+\end{array}
+\right.
+$$
+
+那么称其为$(0,1)$上的均匀分布(uniformly distirbution)。同理可以推广到区间$(\alpha ,\beta )$上的均匀分布。
+
+对于$(\alpha ,\beta )$上的均匀分布，我们有
+$$E(X)=\int_{\alpha }^{\beta }xf(x)dx=\frac{\alpha +\beta }{2}$$
+
+同时又有
+$$E(X^{2})=\int_{\alpha }^{\beta }x^{2}f(x)dx=\frac{\alpha^{2}+\alpha \beta +\beta^{2}}{3} $$
+
+所以
+$$Var(X)=\frac{(\beta -\alpha )^{2}}{12} $$
+
+
+
+
+
+$\gets$ To be continue
+
+\end{document}
+
+
+
+
+
+
+
+
