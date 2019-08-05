@@ -503,7 +503,7 @@ $$f(x)=\left \{
 \right.
 $$
 
-那么称其为$(0,1)$上的均匀分布(uniformly distirbution)。同理可以推广到区间$(\alpha ,\beta )$上的均匀分布。
+那么称其为$(0,1)$上的均匀分布(uniformly distribution)。同理可以推广到区间$(\alpha ,\beta )$上的均匀分布。
 
 对于$(\alpha ,\beta )$上的均匀分布，我们有
 $$E(X)=\int_{\alpha }^{\beta }xf(x)dx=\frac{\alpha +\beta }{2}$$
@@ -514,7 +514,62 @@ $$E(X^{2})=\int_{\alpha }^{\beta }x^{2}f(x)dx=\frac{\alpha^{2}+\alpha \beta +\be
 所以
 $$Var(X)=\frac{(\beta -\alpha )^{2}}{12} $$
 
+\subsection{正态随机变量}
 
+正态分布(normal distribution)，又称高斯分布(gaussian distribution)。
+
+我们定义正态随机变量$X$的密度函数为
+$$f(x)=\frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu )^{2}}{2\sigma^{2}}} $$
+
+称其为参数为$(\mu ,\sigma^{2})$的正态随机变量。
+
+我们对于$y=(x-\mu )/\sigma $可知
+$$\int_{-\infty }^{+\infty }\frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu )^{2}}{2\sigma^{2}}} dx=\frac{1}{\sqrt{2\pi }}\int_{-\infty }^{+\infty } e^{-\frac{y^{2}}{2}}dy $$
+
+下证
+$$\int_{-\infty }^{+\infty } e^{-\frac{y^{2}}{2}}dy=\sqrt{2\pi } $$
+
+$$\int_{-\infty }^{+\infty } e^{-\frac{y^{2}}{2}}dy\int_{-\infty }^{+\infty } e^{-\frac{x^{2}}{2}}dx=\int_{-\infty }^{+\infty }\int_{-\infty }^{+\infty } e^{-\frac{y^{2}+x^{2}}{2}}dydx $$
+
+接下来利用极坐标变换可得
+$$\int_{0}^{\infty }\int_{0}^{2\pi } e^{\frac{r^{2}}{2}} rd\theta dr=2\pi $$
+
+正态分布的线性组合也是正态分布。定义标准正态分布的参数为$(0,1)$。下面证明对于任意正态随机变量$X$，$Y=aX+b$也是正态随机变量，且参数为$a\mu +b$和$a^{2}\sigma^{2} $。
+
+$$F_{Y}(x)=P(X\leq \frac{x-b}{a}=F_{X}(\frac{x-b}{a}) $$
+
+求导可知
+
+$$f_{Y}(x)=\frac{1}{a}f_{X}(\frac{x-b}{a})=\frac{1}{\sqrt{2\pi }a\sigma }exp\{-\frac{(x-b-a\mu )^{2}}{2a^{2}\sigma^{2} } \} $$
+
+标准正态分布的期望为$0$，方差则为
+$$\begin{aligned}
+Var(Z)&=E(Z^{2})=\frac{1}{\sqrt{2\pi }}\int_{-\infty }^{+\infty }x^{2}e^{-\frac{x^{2}}{2}} dx\\
+&=\frac{1}{\sqrt{2\pi }}\Big(-xe^{-\frac{x^{2}}{2}}\Big|_{-\infty }^{+\infty} +\int_{-\infty }^{+\infty }e^{-\frac{x^{2}}{2}} dx\Big)\\
+&=1\\
+\end{aligned} $$
+
+所以正态分布的均值为$\mu $，方差为$\sigma^{2} $。
+
+一般将标准正态随机变量的分布函数记为
+$$\Phi (x)=\frac{1}{\sqrt{2\pi }} \int_{-\infty }^{x}e^{-\frac{y^{2}}{2}} dy$$
+
+$$F_{X}(a)=\Phi (\frac{a-\mu }{\sigma }) $$
+
+当$np(1-p)$较大时，正态分布可以很好地近似二项分布，反之可以利用Poisson分布近似。
+
+一个重要的结论就是De Moivre-Laplace定理，在$n$次独立重复实验中，设成功概率为$p$，记成功次数为$S_{n}$，那么当$n\to \infty $时有
+$$P(a\leq \frac{S_{n}-np}{\sqrt{np(1-p)}} \leq b)\to \Phi (b)-\Phi (a) $$
+
+具体证明可参考中心极限定理。
+
+\subsection{指数随机变量}
+
+\subsection{其他重要分布}
+
+\subsection{随机变量函数的分布}
+
+\section{随机变量的联合分布}
 
 
 
