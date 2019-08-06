@@ -516,7 +516,7 @@ $$Var(X)=\frac{(\beta -\alpha )^{2}}{12} $$
 
 \subsection{正态随机变量}
 
-正态分布(normal distribution)，又称高斯分布(gaussian distribution)。
+正态分布(normal distribution)，又称高斯分布(Gaussian distribution)。
 
 我们定义正态随机变量$X$的密度函数为
 $$f(x)=\frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{(x-\mu )^{2}}{2\sigma^{2}}} $$
@@ -564,6 +564,61 @@ $$P(a\leq \frac{S_{n}-np}{\sqrt{np(1-p)}} \leq b)\to \Phi (b)-\Phi (a) $$
 具体证明可参考中心极限定理。
 
 \subsection{指数随机变量}
+
+如果随机变量$X$的密度函数为
+$$f(x)=\left\{ 
+\begin{array}{ll}
+\lambda e^{-\lambda x} &x \geq 0\\
+0 &x<0\\
+\end{array} 
+\right. $$
+
+则称为参数为$\lambda$的指数随机变量。
+$$F(a)=\int_{0}^{a}\lambda e^{-\lambda x}dx=1-e^{-\lambda a} $$
+
+$$\begin{aligned}
+E(X^{n})&=\int_{0}^{\infty }x^{n}\lambda e^{-\lambda x}dx\\
+&=-x^{n}e^{-\lambda x}\Big|_{0}^{\infty }+\int_{0}^{\infty }nx^{n-1}e^{-\lambda x}dx\\
+&=\frac{n}{\lambda }E(X^{n-1})\\
+\end{aligned} $$
+
+所以有
+$$E(X)=\frac{1}{\lambda } $$
+$$Var(X)=\frac{1}{\lambda^{2}} $$
+
+指数分布是仅有的具有无记忆性的分布，我们定义一个随机变量$X$是无记忆的(memoryless)，如果满足
+$$P(X>s+t|X>t)=P(X>s) $$
+
+指数型随机变量可变形为双指数型随机变量，又称拉普拉斯随机变量。其密度函数为
+$$f(x)=\frac{1}{2}\lambda e^{-\lambda |x|}\qquad -\infty <x<+\infty $$
+
+分布函数为
+$$ F(x)=\left\{ 
+\begin{array}{ll}
+\frac{1}{2}e^{\lambda x} &x\leq 0\\
+1-\frac{1}{2}e^{-\lambda x} &x>0\\
+\end{array}
+\right. $$
+
+\subsection{危险率函数}
+
+考虑一个连续型非负随机变量$X$，将其解释为某个零件的寿命，其危险率函数(hazard rate, failure rate)定义如下
+$$\lambda (t)=\frac{f(t)}{\overline{F}(t)},\qquad \overline{F}=1-F $$
+
+表示使用时间为$t$的零件不能继续使用的概率。对于指数分布
+$$\lambda (t)=\lambda $$
+
+同时分布函数可以由危险率函数唯一确定
+$$F(x)=1-exp\{-\int_{0}^{x}\lambda (t)dt\} $$
+
+而如果
+$$\lambda (t)=a+bt $$
+
+那么有
+$$F(t)=1-e^{-at-\frac{1}{2}bt^{2}} $$
+$$f(t)=(a+bt)e^{-at-\frac{1}{2}bt^{2}} $$
+
+$a=0$时，其被称为瑞利分布(Rayleigh distribution)。
 
 \subsection{其他重要分布}
 
