@@ -104,9 +104,23 @@ $$F_{n}(x)=\frac{1}{n}\sum_{i=1}^{n}I_{(-\infty ,x)}(X_{i}) $$
 所以有
 $$nF_{n}(x)=\sum_{i=1}^{n}Y_{i}~b(n,F(x)) $$
 
+由中心极限定理当$n\to \infty $时有
+$$\frac{\sqrt{n}(F_{n}(x)-F(x))}{\sqrt{F_{n}(x)-F(x)}}\stackrel{\mathcal{L}}{\to } N(0,1) $$
 
+其中$\stackrel{\mathcal{L}}{\to }$表示依分布收敛。
 
+又由Bernoulli大数定律得
+$$F_{n}(x)\stackrel{P}{\to}F(x) \qquad n\to \infty $$
 
+由Borel大数定律得
+$$P(\lim\limits_{n\to \infty }F_{n}(x)=F(x))=1 $$
+
+更进一步，有下列格里汶科定理(Glivenko-Cantelli Theorem)。
+
+定理 设$F(x)$为$r.v.~X$的分布函数，$\{X_{i}\}$为简单随机样本，$F_{n}(x)$为其经验分布函数，记$D_{n}=\sup\limits_{-\infty <x<+\infty }|F_{n}(x)-F(x)| $，则有
+$$P(\lim\limits_{n\to \infty} D_{n}=0)=1 $$
+
+其表明在$n$足够大时，对于所有的$x$，经验分布函数的误差都很小。
 
 \section{抽样分布}
 
