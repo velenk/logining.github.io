@@ -692,6 +692,14 @@ $$Var(X)=\frac{ab}{(a+b)^{2}(a+b+1)} $$
 
 \subsection{随机变量函数的分布}
 
+定理 设$X$是一个连续型随机变量，密度函数为$f_{x}$。设$g(x)$是单调可微函数，那么随机变量$Y=g(x)$的密度函数为
+$$f_{x}(y)=\left\{
+\begin{array}{ll}
+f_{x}(g^{-1}(y))|\frac{d}{dx}g^{-1}(y)| &\exists x,y=g(x)\\
+0 &\forall x,y\neq g(x)\\
+\end{array}
+\right. $$
+
 \section{随机变量的联合分布}
 
 
