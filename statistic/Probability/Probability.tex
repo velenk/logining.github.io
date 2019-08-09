@@ -26,6 +26,8 @@
 （如果有时间也许会顺手往下写随机过程的续集，嗯，一定不会咕咕咕）\\
 \end{abstract}
 
+\newpage
+
 \section{绪论}
 绪论就不写具体内容了，简单写一下概率的现代测度定义吧，看不懂也不影响学基础概率论。
 定义 设$\Omega $是一个非空集合，$\mathcal{F}$是$\Omega $中的子集类，如果满足：\\
@@ -72,6 +74,8 @@ $$\mathbb{P}(A)=\frac{m(A)}{b-a}$$
 可以粗略理解为将每一个事件映射到实数集上从而形成一个随机变量，如果被映射到的是整数集，那么就相当于离散型随机变量。\\
 
 搞这么麻烦就是为了给概率一个抽象而精确的数学定义，从测度论开始概率算是脱离了玄学进入了现代数学，这点上概率与统计不同。然而这对于概率论基础学习而言其实并没有什么卵用，我自己到现在也没有完全明白，单纯用来水一下绪论。
+
+\newpage
 
 \section{概率公理和条件概率}
 
@@ -281,6 +285,8 @@ $$P(H_{i}|E_{1}E_{2})=\frac{P(E_{1}E_{2}|H_{i})P(H_{i})}{\sum\limits_{j}P(E_{1}E
 
 前提是$E_{1}$和$E_{2}$对于$H_{j}$条件独立。
 
+\newpage
+
 \section{离散型随机变量}
 
 \subsection{基本概念}
@@ -455,6 +461,8 @@ $$P(X=k)=C\frac{1}{k^{\alpha +1}},\qquad k=1,2,\ldots $$
 
 其中
 $$C=(\zeta (s))^{-1}=(\sum_{k=1}^{\infty } (\frac{1}{k})^{s})^{-1}$$
+
+\newpage
 
 \section{连续型随机变量}
 
@@ -695,14 +703,47 @@ $$Var(X)=\frac{ab}{(a+b)^{2}(a+b+1)} $$
 定理 设$X$是一个连续型随机变量，密度函数为$f_{x}$。设$g(x)$是单调可微函数，那么随机变量$Y=g(x)$的密度函数为
 $$f_{x}(y)=\left\{
 \begin{array}{ll}
-f_{x}(g^{-1}(y))|\frac{d}{dx}g^{-1}(y)| &\exists x,y=g(x)\\
+f_{x}(g^{-1}(y))|\displaystyle\frac{d}{dx}g^{-1}(y)| &\exists x,y=g(x)\\
 0 &\forall x,y\neq g(x)\\
 \end{array}
 \right. $$
 
+对于$g(x)$递增的情况证明
+$$F_{Y}(y)=P(g(X)\leq y)=P(X\leq g^{-1}(y))=F_{X}(g^{-1}(y)) $$
+
+求导得
+$$f_{Y}(y)=f_{X}(g^{-1}(y))\displaystyle\frac{d}{dy}g^{-1}(y) $$
+
+所以假设$X$是一个非负随机变量，则对于$g(x)=x^{n} $有
+$$f_{Y}(y)=\frac{1}{n}y^{\frac{1}{n} -1}f(y^{\frac{1}{n}}) $$
+
+对于参数为$(\mu ,\sigma^{2}) $的正态随机变量$X$，设
+$$Y=e^{X}$$
+
+称其为参数为$(\mu ,\sigma^{2}) $的对数正态随机变量，即$ln(y)$满足正态分布。常用于描述证券价格相对于昨天的比率分布。
+
+同时可得
+$$f_{Y}(y)=\displaystyle\frac{1}{\sqrt{2\pi } \sigma y}exp\{-\frac{(ln(y)-\mu )^{2}}{2\sigma^{2}}\} $$
+
+\newpage
+
 \section{随机变量的联合分布}
 
+\subsection{联合分布函数}
 
+
+
+\subsection{独立随机变量}
+
+\subsection{独立随机变量的和}
+
+\subsection{离散情形下的条件分布}
+
+\subsection{连续情形下的条件分布}
+
+\subsection{次序统计量}
+
+\subsection{随机变量函数的联合分布}
 
 $\gets$ To be continue
 
