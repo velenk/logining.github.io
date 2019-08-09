@@ -32,12 +32,10 @@ jupyter确实好用，主要扩展了$Tab,?,*$的功能。
 
 还有一些快捷键仅限IPython使用。
 
-另外就是一些常用的Magic Command，比如$\%run,\%load,\\
-\%debug,\%matplotlib~inline$
+另外就是一些常用的Magic Command，比如$\%run, \%load, \\
+\%debug, \%xmode~Plain, \%matplotlib~inline$
 
 \subsection{Python基础}
-
-基本的条件和循环。
 
 \#注释。
 
@@ -47,7 +45,13 @@ jupyter确实好用，主要扩展了$Tab,?,*$的功能。
 
 变量赋值类似引用(reference)。
 
-动态类型，利用type()进行类型检查。
+动态类型，利用type()和isinstance()进行类型检查。后者可以传入tuple代替逻辑或操作。
+
+print配合format输出。
+
+Python中的object拥有各自的属性(attributes)和方法(methods)，可通过getattr, hasattr, setattr操作。其中getattr可以直接使用返回对象，setattr不改变原class。
+
+
 
 
 
