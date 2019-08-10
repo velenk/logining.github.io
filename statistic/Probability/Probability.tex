@@ -731,6 +731,30 @@ $$f_{Y}(y)=\displaystyle\frac{1}{\sqrt{2\pi } \sigma y}exp\{-\frac{(ln(y)-\mu )^
 
 \subsection{联合分布函数}
 
+定义两个随机变量$X,Y$的联合概率分布函数(joint cumulative probability distribution function)为
+$$F(a,b)=P(X\leq a,Y\leq b)\quad -\infty <a,b<+\infty $$
+
+$$F_{X}(a)=P(X\leq a,Y<\infty)=\lim_{b\to \infty}F(a,b) $$
+
+其中$F_{X}$被称为$X$的边缘分布(marginal distribution)。
+
+理论上所有关于$X,Y$的概率问题都可以由联合分布函数来计算。例如
+$$P(X>a,Y>b)=1-F_{X}(a)-F_{X}(b)+F(a,b) $$
+
+更进一步有
+
+$$P(a_{1}<X\leq a_{2},b_{1}<Y\leq b_{2})=F(a_{1},b_{1})+F(a_{2},b_{2})-F(a_{1},b_{2})-F(a_{2},b_{1}) $$
+
+当$X,Y$都是离散型随机变量时，可以很容易定义其联合概率分布列(jonit probability mass function)
+$$p(x,y)=P(X=x,Y=y)$$
+
+$$p_{X}(x)=\sum_{y:p(x,y)>0}p(x,y) $$
+
+另一方面，我们称$X,Y$是联合连续的(jointly continuous)，如果存在一个定义于$\mathbb{R}^{2}$上的函数$f(x,y)$满足对任意集合$C$有
+$$P((X,Y)\in C)=\iint\limits_{(x,y)\in C} f(x,y)dxdy $$
+
+则称其为$X,Y$的联合密度函数(joint probability density function)。
+
 
 
 \subsection{独立随机变量}
