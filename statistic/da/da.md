@@ -325,6 +325,494 @@ range()函数。
 
 ### 数据结构
 
+Tuple是Python的基本数据结构之一，可用逗号分隔直接创建，或者分解顺序容器，也可以通过range构造序列。
+
+```python
+tup = 3, (4, 5, 6), (7, 8)
+tup
+# Out: (3, (4, 5, 6), (7, 8))
+tuple([4, 0, 2])
+# Out: (4, 0, 2)
+tuple('string')
+# Out: ('s', 't', 'r', 'i', 'n', 'g')
+tuple(['foo', [1, 2], True])
+# Out: ('foo', [1, 2], True)
+tuple(range(10))
+# Out: (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+```
+
+tuple也可以直接进行$+,*$运算，和解压操作。
+
+```python
+(4, None, 'foo') + (6, 0) + ('bar',)
+# Out: (4, None, 'foo', 6, 0, 'bar')
+('foo', 'bar') * 4
+# Out: ('foo', 'bar', 'foo', 'bar', 'foo', 'bar', 'foo', 'bar')
+tup = 4, 5, (6, 7)
+a, b, (c, d) = tup
+d
+# Out: 7
+a, b = 1, 2
+b, a = a, b
+print(a,b)
+# Out: 2 1
+```
+
+也可以配合多变量for循环。
+
+```python
+seq = [(1, 2, 3), (4, 5, 6), (7, 8, 9)]
+for a, b, c in seq:
+    print('a={0}, b={1}, c={2}'.format(a, b, c))
+'''
+Out:
+a=1, b=2, c=3
+a=4, b=5, c=6
+a=7, b=8, c=9
+'''
+```
+
+用*可以代指tuple的剩余部分。
+
+```python
+values = 1, 2, 3, 4, 5
+a, b, *rest = values
+rest
+# Out: [3, 4, 5]
+```
+
+count是tuple的常用方法。
+
+```python
+a = (1, 2, 2, 2, 3, 4, 2)
+a.count(2)
+# Out: 4
+```
+
+List近似于可变的tuple，定义方法和tuple类似，也可以进行$+,*$操作。
+
+利用append，insert，extend，pop，remove可以对list进行修改。但extend比$+$速度快。
+
+```python
+tup = ('foo', 'bar', 'baz')
+b_list = list(tup)
+b_list
+# Out: ['foo', 'bar', 'baz']
+b_list.append('dwarf')
+b_list
+# Out: ['foo', 'bar', 'baz', 'dwarf']
+b_list.insert(1, 'red')
+b_list
+# Out: ['foo', 'red', 'bar', 'baz', 'dwarf']
+b_list.extend([7, 8, (2, 3)])
+b_list
+# Out: ['foo', 'red', 'bar', 'baz', 'dwarf', 7, 8, (2, 3)]
+b_list.pop(2)
+b_list
+# Out: ['foo', 'red', 'baz', 'dwarf', 7, 8, (2, 3)]
+b_list.append('foo')
+b_list.remove('foo')
+b_list
+# Out: ['red', 'baz', 'dwarf', 7, 8, (2, 3), 'foo']
+```
+
+sort可以对一个list排序，bisect库可以进行二分操作。但bisect需要预先排序。sorted可以生成排序后的list。还可以设置排序的key。
+
+```python
+import bisect
+a = [7, 2, 2, 5, 1, 3]
+a.sort()
+a
+# Out: [1, 2, 2, 3, 5, 7]
+b = ['saw', 'small', 'He', 'foxes', 'six']
+b.sort(key=len)
+b
+# Out: ['He', 'saw', 'six', 'small', 'foxes']
+import bisect
+bisect.bisect(a, 2)
+# Out: 3
+bisect.bisect(a, 6)
+# Out: 5
+bisect.insort(a, 6)
+a
+# Out: [1, 2, 2, 3, 5, 6, 7]
+sorted('horse race')
+# Out: [' ', 'a', 'c', 'e', 'e', 'h', 'o', 'r', 'r', 's']
+sorted('horse race', key = lambda x : -ord(x))
+# Out: ['s', 'r', 'r', 'o', 'h', 'e', 'e', 'c', 'a', ' ']
+```
+
+利用[begin: end: step]可以轻松实现部分list的选取和修改，其中step也可以为负数。reverse能反转整个容器。
+
+```python
+list(reversed(range(10)))
+# Out: [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+```
+
+enumerate和zip可以用于生成变量组合。
+
+```python
+some_list = ['foo', 'bar', 'baz']
+mapping = {}
+for i, v in enumerate(some_list):
+    mapping[v] = i
+mapping
+# Out: {'foo': 0, 'bar': 1, 'baz': 2}
+seq1 = ['foo', 'bar', 'baz']
+seq2 = ['one', 'two', 'three']
+zipped = zip(seq1, seq2)
+list(zipped)
+# Out: [('foo', 'one'), ('bar', 'two'), ('baz', 'three')]
+seq3 = [False, True]
+list(zip(seq1, seq2, seq3))
+# Out: [('foo', 'one', False), ('bar', 'two', True)]
+for i, (a, b) in enumerate(zip(seq1, seq2)):
+    print('{0}: {1}, {2}'.format(i, a, b))
+'''
+Out:
+0: foo, one
+1: bar, two
+2: baz, three
+'''
+```
+
+zip也可以反过来进行解压。
+
+```python
+pitchers = [('Nolan', 'Ryan'), ('Roger', 'Clemens'),
+            ('Schilling', 'Curt')]
+first_names, last_names = zip(*pitchers)
+first_names
+# Out: ('Nolan', 'Roger', 'Schilling')
+```
+
+```python
+# ----- Day 3 -----
+```
+
+字典(dict)是Python最重要的数据结构之一，存储键值对(key-value pair)，基本操作如下。
+
+```python
+d1 = {'a' : 'some value', 'b' : [1, 2, 3, 4]}
+d1
+# Out: {'a': 'some value', 'b': [1, 2, 3, 4]}
+d1['b']
+# Out: [1, 2, 3, 4]
+d1['dummy'] = 'another value'
+d1
+# Out: {'a': 'some value', 'b': [1, 2, 3, 4], 'dummy': 'another value'}
+del d1['a']
+d1
+# Out: {'b': [1, 2, 3, 4], 'dummy': 'another value'}
+ret = d1.pop('dummy')
+ret
+# Out: 'another value'
+d1
+# Out: {'b': [1, 2, 3, 4]}
+'b' in d1
+# Out: True
+list(d1.keys())
+# Out: ['b']
+list(d1.values())
+# Out: [[1, 2, 3, 4]]
+d1['b'] = 1
+d1
+# Out: {'b': 1}
+d1.update({'b': 2, 2: ['a', 'b']})
+d1
+# Out: {'b': 2, 2: ['a', 'b']}
+```
+
+dict()可以直接生成dict。
+
+```python
+map1 = dict(zip(range(5), range(5, -5, -1)))
+map1
+# Out: {0: 5, 1: 4, 2: 3, 3: 2, 4: 1}
+map2 = dict(zip(range(10), range(5, 0, -1)))
+map2
+# Out: {0: 5, 1: 4, 2: 3, 3: 2, 4: 1}
+```
+
+读取dict值时还可以利用get设置默认值。如果不使用get，则会发生KeyError，比如pop()和del。所以使用dict前务必用in检查key是否存在。
+
+```python
+# value = some_dict.get(key, default_value)
+```
+
+在使用list作为值时，要注意将default设为空list。可以使用setdefault方法或者defaultdict类型。
+
+```python
+words = ['apple', 'bat', 'bar', 'atom', 'book']
+by_letter = {}
+for word in words:
+    letter = word[0]
+    by_letter.setdefault(letter, []).append(word)
+by_letter
+# Out: {'a': ['apple', 'atom'], 'b': ['bat', 'bar', 'book']}
+from collections import defaultdict
+by_letter = defaultdict(list)
+by_letter
+# Out: defaultdict(list, {})
+for word in words:
+    by_letter[word[0]].append(word)
+by_letter
+# Out: defaultdict(list, {'a': ['apple', 'atom'], 'b': ['bat', 'bar', 'book']})
+```
+
+dict利用了hash()，所以key必须是可以被hash的对象。例如list无法作为key使用，需要转化为tuple。因为在list变化后，hash值也被改变，因而dict中保存的list将找不到对应的value产生错误。
+
+set是无序无重复的容器。利用set()或者{}来生成set。
+
+set可以利用union(), intersection(), difference(), symmetrice_difference()来进行操作，也可以使用|, &, -, ^。
+
+常见方法有:
+
+add(), clear(), remove(), pop(), copy(), len();
+
+union(), update(), intersection(), intersection_update(), difference(), difference_update(), symmetrice_difference(), symmetrice_difference_update();
+
+issubset(), issuperset(), isdisjoint()。
+
+和dict类似，remove()和pop()需要先用in检查，否则会抛出KeyError。
+
+同样，set也利用了hash，所以也不能加入list。
+
+for in if语句常被用于list，dict，set中。可以轻松进行条件筛选。
+
+```python
+strings = ['a', 'as', 'bat', 'car', 'dove', 'python']
+[x.upper() for x in strings if len(x) > 2]
+# Out: ['BAT', 'CAR', 'DOVE', 'PYTHON']
+unique_lengths = {len(x) for x in strings}
+unique_lengths
+# Out: {1, 2, 3, 4, 6}
+loc_mapping = {val : index for index, val in enumerate(strings)}
+loc_mapping
+# Out: {'a': 0, 'as': 1, 'bat': 2, 'car': 3, 'dove': 4, 'python': 5}
+all_data = [['John', 'Emily', 'Michael', 'Mary', 'Steven'],
+            ['Maria', 'Juan', 'Javier', 'Natalia', 'Pilar']]
+result = [name for names in all_data for name in names
+          if name.count('e') >= 1]
+result
+# Out: ['Michael', 'Steven', 'Javier']
+```
+
+也可以使用map函数，对顺序容器做一个映射。
+
+```python
+set(map(len, strings))
+# Out: {1, 2, 3, 4, 6}
+list(map(lambda k: k ** 2, [1, 2, 3, 4, 5]))
+# Out: [1, 4, 9, 16, 25]
+dict(map(lambda x, y: (x, y), [1, 3, 5, 7, 9], [2, 4, 6, 8, 10]))
+# Out: {1: 2, 3: 4, 5: 6, 7: 8, 9: 10}
+```
+
+多重for in语句。
+
+```python
+some_tuples = [(1, 2, 3), (4, 5, 6), (7, 8, 9)]
+[[x for x in tup] for tup in some_tuples]
+# Out: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+```
+
+```python
+# ----- Day 4 -----
+```
+
+### 函数
+
+函数定义时可以设置默认参数。调用时可以无视默认参数。也可以乱序设定参数。
+
+定义在函数内部的本地变量会在return时被销毁。但可以使用global来定义。但不建议过多使用全局变量，那说明需要使用class和面向对象编程(object-oriented programming)。
+
+Python可以返回多个参数。
+
+```python
+def f():
+    a = 5
+    b = 6
+    c = 7
+    return a, b, c
+
+c = 1
+a, b, d = f()
+print(a, b, c)
+# Out: 5 6 1
+```
+
+Python中函数也是一种对象。由此可以将不同函数进行组合。
+
+```python
+import re
+states = ['   Alabama ', 'Georgia!', 'Georgia', 'georgia', 
+          'FlOrIda', 'south   carolina##', 'West virginia?']
+
+def remove_punctuation(value):
+    return re.sub('[!#?]', '', value)
+
+clean_ops = [str.strip, remove_punctuation, str.title]
+
+def clean_strings(strings, ops):
+    result = []
+    for value in strings:
+        for function in ops:
+            value = function(value)
+        result.append(value)
+    return result
+
+clean_strings(states, clean_ops)
+'''
+Out:
+['Alabama',
+ 'Georgia',
+ 'Georgia',
+ 'Georgia',
+ 'Florida',
+ 'South   Carolina',
+ 'West Virginia']
+'''
+```
+
+在数据分析中，还会经常使用匿名函数(anonymous function)。其本身在创建时没有\__name__属性。
+
+```python
+anon = lambda x: x * 2
+anon(4)
+# Out: 8
+def apply_to_list(some_list, f):
+    return [f(x) for x in some_list]
+
+ints = [4, 0, 1, 5, 6]
+apply_to_list(ints, lambda x: x * 2)
+# Out: [8, 0, 2, 10, 12]
+strings = ['foo', 'card', 'bar', 'aaaa', 'abab']
+strings.sort(key=lambda x: len(set(list(x))))
+strings
+# Out: ['aaaa', 'foo', 'abab', 'bar', 'card']
+```
+
+偏函数用于对函数进行局部套用，可以理解为封装。
+
+```python
+# functools.partial(func, *args, **keywords)
+def add(*args, **kwargs):
+    for n in args:
+        print(n)
+    print("-"*10)
+    for k, v in kwargs.items():
+       print('%s=%s' % (k, v))
+
+add(1, 2, 3, k1=10, k2=20)
+'''
+Out:
+1
+2
+3
+----------
+k1=10
+k2=20
+'''
+from functools import partial
+add_partial = partial(add, 10, k1=10, k2=20)
+add_partial(1, 2, 3, k3=20)
+'''
+Out:
+10
+1
+2
+3
+----------
+k1=10
+k2=20
+k3=20
+'''
+add_partial(1, k1=0)
+'''
+Out:
+10
+1
+----------
+k1=0
+k2=20
+'''
+```
+
+Python的生成器(generator)在数据科学领域有着广泛的应用，占用计算机资源较小。生成器也可以进行迭代，但与普通的顺序容器不同的是，它不会把所有数据存入内存中，而是只能被读取一次，实时生成数据。
+
+生成器可以通过()构建，也可以使用关键字yield。每次生成器返回一个值时就会被冻结，直到下次调用再返回一个值。
+
+```python
+gen = (x for x in range(5))
+print(gen)
+# Out: <generator object <genexpr> at 0x0000023E97215830>
+for item in gen:
+    print(item)
+'''
+Out:
+0
+1
+2
+3
+4
+'''
+def createGenerator() :
+    mylist = range(3)
+    for i in mylist :
+        yield i*i
+
+mygenerator = createGenerator()
+print(mygenerator)
+# Out: <generator object createGenerator at 0x0000023E97215938>
+for res in mygenerator:
+    print(res)
+'''
+Out:
+0
+1
+4
+'''
+mygenerator = createGenerator()
+print(next(mygenerator))
+# Out: 0
+```
+
+生成器可以用来代替列表推导式(list comprehension)。
+
+```python
+dict((x, x ** 2) for x in range(5))
+# Out: {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+```
+
+标准库itertools提供了许多常用生成器。
+
+```python
+import itertools as it
+list(it.combinations(range(3), 2))
+# Out: [(0, 1), (0, 2), (1, 2)]
+list(it.permutations(range(3), 2))
+# Out: [(0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1)]
+import itertools
+first_letter = lambda x: x[0]
+allnames = ['Alan', 'Adam', 'Wes', 'Will', 'Albert', 'Steven']
+for letter, names in itertools.groupby(allnames, first_letter):
+    print(letter, list(names)) # names is a generator
+'''
+Out:
+A ['Alan', 'Adam']
+W ['Wes', 'Will']
+A ['Albert']
+S ['Steven']
+'''
+list(it.product(range(2), ['a', 'b'], repeat = 1))
+# Out: [(0, 'a'), (0, 'b'), (1, 'a'), (1, 'b')]
+```
+
+```python
+# ----- Day 5 -----
+```
+
 
 
 ## Numpy库
