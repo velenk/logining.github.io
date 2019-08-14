@@ -813,6 +813,154 @@ list(it.product(range(2), ['a', 'b'], repeat = 1))
 # ----- Day 5 -----
 ```
 
+### 异常处理
+
+可以通过try expect语句进行异常抛出。同时可以设置异常类型，还能使用as和Exception。
+
+```python
+def attempt_float(x):
+    try:
+        return float(x)
+    except (ValueError, TypeError) as e:
+        print(e)
+        return x
+    except Exception:
+        return x
+attempt_float('1.234')
+# Out: 1.234
+attempt_float('1')
+# Out: 1.0
+attempt_float('1.a')
+'''
+Out:
+could not convert string to float: '1.a'
+'1.a'
+'''
+```
+
+同时还可以使用else和finally。
+
+```python
+try:
+    f = open(path, 'w')
+except:
+    print('Not Found')
+else:
+    try:
+        write_to_file(f)
+    except:
+        print('Failed')
+    else:
+        print('Succeeded')
+    finally:
+        f.close()
+```
+
+还可以使用raise触发异常。
+
+```python
+# raise [Exception [, args [, traceback]]]
+def ThorwErr():
+    raise Exception("抛出一个异常")
+ThorwErr()
+```
+
+捕捉到了异常，但是又想重新引发它(传递异常)，可以使用不带参数的raise语句。
+
+```python
+class MuffledCalculator:
+    muffled = False
+    def calc(self, expr):
+        try:
+            return eval(expr)
+        except ZeroDivisionError:
+            if self.muffled:
+                print('Division by zero is illegal')
+            else:
+                raise
+a = MuffledCalculator()
+# a.muffled = True
+a.calc('2/0')
+```
+
+也可以自定义异常类型，对Exception类进行继承即可。
+
+```python
+class ShortInputException(Exception):
+    def __init__(self, length, atleast):
+        self.length = length
+        self.atleast = atleast
+try:
+    s = input()
+    if len(s) < 3:
+        raise ShortInputException(len(s), 3)
+except ShortInputException as e:
+    print('输入长度是%s,长度至少是%s' %(e.length, e.atleast))
+else:
+    print(s)
+# In: ab
+# Out: 输入长度是2,长度至少是3
+```
+
+### 文件系统
+
+利用open()和close()打开关闭文件，可以设置编码方式，r只读，w只写，x新建只写，a添加，r+读写，b二进制模式，t文本模式。打开后tell()表示当前位置，不同编码tell()效果不同。
+
+```python
+path = 'segismundo.txt'
+f1 = open(path, 'rb')
+lines = (x.rstrip() for x in open(path))
+a = f1.read(10)
+a.decode(encoding = 'utf-8')
+# Out: 'Sueña el '
+f2 = open(path)
+lines = (x.rstrip() for x in open(path))
+a = f2.read(10)
+a.encode(encoding = 'gbk').decode('utf-8')
+# Out: 'Sueña el r'
+print(f1.tell(), f2.tell())
+# Out: 10 11
+f1.close()
+f2.close()
+```
+
+也可以用with open读取文件。
+
+```python
+with open('segismundo.txt', 'r', encoding='gbk') as f:
+    lines = [x.rstrip().encode('cp936').decode('utf-8')\
+             for x in open(path)]
+lines[0]
+# Out: 'Sueña el rico en su riqueza,'
+```
+
+文件读取也与系统默认编码有关，可以通过sys和locale库查看系统默认编码和Python默认编码。
+
+```python
+import sys
+sys.getdefaultencoding()
+# Out: 'utf-8'
+import locale
+locale.getpreferredencoding()
+# Out: 'cp936'
+# cp936 = gbk
+```
+
+seek()和read()分别用来移动到指定位置和读取字符。慎用seek()，因为seek()转移到某个多字节字符中间时进行read()会发生UnicodeDecodeError。
+
+```python
+f = open(path, 'r')
+f.seek(3)
+# Out: 3
+f.read(1).encode('gbk').decode('utf-8')
+# Out: 'ñ'
+```
+
+文件的常用方法还有readlines(), write(), writelines(), flush(), closed。
+```python
+# ----- Day 6 -----
+```
+
 
 
 ## Numpy库
