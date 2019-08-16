@@ -235,7 +235,7 @@ type(None)
 # Out: NoneType
 ```
 
-and和or运算。
+and和or运算。注意Python没有位运算操作符，&, |, ~都是逻辑运算。
 
 Python自带时间与日期库。datetime是不可变类型，所以所有的操作都会产生新的对象而不改变原对象。
 
@@ -963,6 +963,352 @@ f.read(1).encode('gbk').decode('utf-8')
 
 
 
-## Numpy库
+## NumPy库
 
 
+
+### N维数组
+
+numpy库全称Numerical Python，专用于科学计算，由于底层C语言的实现，速度比纯python快几十倍。rand()返回[0, 1)上的均匀分布，randn()返回标准正态分布。
+
+```python
+import numpy as np
+data = np.random.randn(2, 3)
+data
+'''
+Out:
+array([[-0.97835473,  0.41601724, -0.75555622],
+       [ 1.90504659,  0.22870654, -0.45414597]])
+'''
+```
+
+可以直接对数组进行数学运算。shape()和dtype()可以查看数组信息。
+
+```python
+data * 10
+'''
+Out:
+array([[-9.7835,  4.1602, -7.5556],
+       [19.0505,  2.2871, -4.5415]])
+'''
+data + data
+'''
+Out:
+array([[-1.9567,  0.832 , -1.5111],
+       [ 3.8101,  0.4574, -0.9083]])
+'''
+data.shape
+# Out: (2, 3)
+data.dtype
+# Out: dtype('float64')
+```
+
+array()方法可以将传入参数转化为数组，而如果参数是数组那么会产生一个副本，而使用asarray()会直接返回传入的数组。
+
+用ndim返回第一维的维数。
+
+```python
+data1 = [[1, 2, 3], [2, 4, 6]]
+arr1 = np.array(data1)
+arr1.ndim
+# Out: 2
+```
+
+zeros(), ones(), zeros_like(), ones_like(), full(), full_like()用来创建新数组。
+
+最好不要使用没有初始化的empty()。
+
+arange()创建一个一维顺序数组。
+
+eye()和identity()用来创建单位矩阵。
+
+默认数据类型均为float64。
+
+通过设定dtype参数改变数据类型。
+
+```python
+arr2 = np.identity(3)
+arr2
+'''
+Out:
+array([[1., 0., 0.],
+       [0., 1., 0.],
+       [0., 0., 1.]])
+'''
+arr3 = np.full_like(arr2, 3, dtype=np.int32)
+arr3
+'''
+Out:
+array([[3, 3, 3],
+       [3, 3, 3],
+       [3, 3, 3]])
+'''
+```
+
+numpy支持的数据类型有：
+
+int8, uint8, int16, uint16, int64, uint64;
+
+float16, float32, float64, float128;
+
+complex64, complex128, complex256;
+
+bool, object, string_, unicode\_。
+
+缩写为i1, u1, i2, u2, i4, u4, i8, u8;
+
+f2, f4 or f, f8 or d, f16 or g;
+
+c8, c16, c21;
+
+?, 0, S, U。
+
+对于非数学类型最好使用pandas。
+
+astype()可以进行类型转换，调用时总会创建一个新的array。
+
+```python
+arr4 = arr3.astype('f8')
+arr4
+'''
+Out:
+array([[3., 3., 3.],
+       [3., 3., 3.],
+       [3., 3., 3.]])
+'''
+```
+
+除了array相互加减乘之外，numpy还支持常数乘除法和指数运算。
+
+对size相同的array使用不等号还可以返回一个bool类型的数组。
+
+```python
+arr5 = np.random.randn(2, 3)
+arr6 = 1 / arr5
+arr6 < arr5
+'''
+Out:
+array([[False, False, False],
+       [ True,  True, False]])
+'''
+```
+
+和list类似，array可以使用[begin1: end1, begin2: end2, ... ]来获得子数组。注意获得子数组并未新建，利用copy()来获得副本。
+
+```python
+arr0 = np.array([[1, 2, 3], 
+                 [4, 5, 6], 
+                 [7, 8, 9]])
+arr7 = arr0[0]
+arr7
+# Out: array([1, 2, 3])
+arr7[:] = 0
+arr0
+'''
+Out:
+array([[0, 0, 0],
+       [4, 5, 6],
+       [7, 8, 9]])
+'''
+arr8 = arr0[1:3, :2].copy()
+arr8
+'''
+Out:
+array([[4, 5],
+       [7, 8]])
+'''
+```
+
+```python
+# ----- Day 7 -----
+```
+
+除了基本索引之外，还可以使用布尔索引，但要保证维数相同，Python并不会报错。也可以两者结合使用。
+
+```python
+import numpy as np
+names = np.array(['A', 'B', 'A', 'C'])
+data = np.eye(4, dtype='i4')
+names == 'A'
+# Out: array([ True, False,  True, False])
+data[names == 'A']
+'''
+Out:
+array([[1, 0, 0, 0],
+       [0, 0, 1, 0]])
+'''
+data[names == 'A', :2]
+'''
+Out:
+array([[1, 0],
+       [0, 0]])
+'''
+data[~((names == 'A') | (names == 'C')), 2:]
+# Out: array([[1, 0, 0]])
+```
+
+也可以利用逻辑表达式来改变array的内容。
+
+```python
+data[data > 0] = -1
+data
+'''
+Out:
+array([[-1,  0,  0,  0],
+       [ 0, -1,  0,  0],
+       [ 0,  0, -1,  0],
+       [ 0,  0,  0, -1]])
+'''
+data[names != 'A'] = 1
+data
+'''
+Out:
+array([[-1,  0,  0,  0],
+       [ 1,  1,  1,  1],
+       [ 0,  0, -1,  0],
+       [ 1,  1,  1,  1]])
+'''
+```
+
+花式索引(fancy index)是一种智能索引。通过传递索引数组来一次获得多个元素。
+
+```python
+arr = np.zeros((8, 4))
+for i in range(8):
+    arr[i] = i
+arr[[4, 3, -1]]
+'''
+Out:
+array([[4., 4., 4., 4.],
+       [3., 3., 3., 3.],
+       [7., 7., 7., 7.]])
+'''
+arr = np.arange(20).reshape(5, 4) + 1
+arr
+'''
+Out:
+array([[ 1,  2,  3,  4],
+       [ 5,  6,  7,  8],
+       [ 9, 10, 11, 12],
+       [13, 14, 15, 16],
+       [17, 18, 19, 20]])
+'''
+arr[[1, 2, -1], [3, 0, -1]]
+# Out: array([ 8,  9, 20])
+```
+
+也可以多重嵌套fancy index。
+
+```python
+arr[[1, 2]]
+'''
+Out:
+array([[ 5,  6,  7,  8],
+       [ 9, 10, 11, 12]])
+'''
+arr[[1, 2]][:, [1, 0]]
+'''
+Out:
+array([[ 6,  5],
+       [10,  9]])
+'''
+```
+
+可用dot()来计算array的点积。T获得转置，也可以使用transpose()，高维建议使用后者，前者相当于整个array倒置。swapaxes()则能交换两个维度。
+
+```python
+arr = np.arange(24).reshape((2, 4, 3)) +1
+arr
+'''
+Out:
+array([[[ 1,  2,  3],
+        [ 4,  5,  6],
+        [ 7,  8,  9],
+        [10, 11, 12]],
+
+       [[13, 14, 15],
+        [16, 17, 18],
+        [19, 20, 21],
+        [22, 23, 24]]])
+'''
+arr.T
+'''
+Out:
+array([[[ 1, 13],
+        [ 4, 16],
+        [ 7, 19],
+        [10, 22]],
+
+       [[ 2, 14],
+        [ 5, 17],
+        [ 8, 20],
+        [11, 23]],
+
+       [[ 3, 15],
+        [ 6, 18],
+        [ 9, 21],
+        [12, 24]]])
+'''
+arr.transpose((1, 0, 2))
+'''
+Out:
+array([[[ 1,  2,  3],
+        [13, 14, 15]],
+
+       [[ 4,  5,  6],
+        [16, 17, 18]],
+
+       [[ 7,  8,  9],
+        [19, 20, 21]],
+
+       [[10, 11, 12],
+        [22, 23, 24]]])
+'''
+arr.swapaxes(0, 1)
+'''
+Out:
+array([[[ 1,  2,  3],
+        [13, 14, 15]],
+
+       [[ 4,  5,  6],
+        [16, 17, 18]],
+
+       [[ 7,  8,  9],
+        [19, 20, 21]],
+
+       [[10, 11, 12],
+        [22, 23, 24]]])
+'''
+```
+
+```python
+# ----- Day 8 -----
+```
+
+
+
+### 通用函数
+
+
+
+### 面向数组编程
+
+
+
+### 文件读写
+
+
+
+### 线性代数
+
+
+
+### 伪随机数的产生
+
+
+
+### 样例：随机游动
+
+
+
+## Pandas库
