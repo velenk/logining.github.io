@@ -1470,21 +1470,387 @@ array([[[1., 1., 1., 1.],
 '''
 ```
 
+除此以外还有var(), std(), argmin(), argmax()等函数。其中后两者返回最值第一次出现的位置。
+
 ```python
 # ----- Day 10 -----
+```
+
+boolean数组也可以执行sum()，同时还有any(), all()来进行整体与或。这也能用在其他array中。
+
+array还可以执行sort()，利用axis参数将给定维度坐标不同，其余坐标相同的元素排序。
+
+```python
+arr = np.random.randn(3, 3, 3) *5
+arr = np.ceil(arr)
+arr
+'''
+Out:
+array([[[ -3.,  -0.,  -0.],
+        [  5.,   8.,  -3.],
+        [  1.,   1.,   5.]],
+
+       [[  5.,   4.,  -3.],
+        [ -1.,   2.,   1.],
+        [ -2.,  -6.,  -8.]],
+
+       [[ -1.,   6.,   6.],
+        [  3.,  -4.,   6.],
+        [  3., -11.,  -0.]]])
+'''
+arr.sort(axis=1)
+arr
+'''
+Out:
+array([[[ -3.,  -0.,  -3.],
+        [  1.,   1.,  -0.],
+        [  5.,   8.,   5.]],
+
+       [[ -2.,  -6.,  -8.],
+        [ -1.,   2.,  -3.],
+        [  5.,   4.,   1.]],
+
+       [[ -1., -11.,  -0.],
+        [  3.,  -4.,   6.],
+        [  3.,   6.,   6.]]])
+'''
+```
+
+利用sort()可以很方便地计算q分位数。
+
+```python
+arr = np.random.randn(1000)
+arr.sort()
+arr[int(0.05 * len(arr))]
+# Out: -1.5488900316485399
+```
+
+另外还有一些常用函数：
+
+unique(x), intersect1d(x, y), union1d(x, y), in1d(x, y), setdiff1d(x, y), setxor1d(x, y)。
+
+其中intersect1d等返回的都是一维值数组。in1d()返回一个一维的boolean数组。
+
+```python
+arr1 = np.array([[3, 4, 5],
+                 [4, 2, 3],
+                 [5, 3, 5]])
+arr2 = np.array([[1, 2, 5],
+                 [3, 4, 3],
+                 [5, 3, 5]])
+np.unique(arr1)
+# Out: array([0, 2, 3, 4, 5])
+np.union1d(arr1, arr2)
+# Out: array([0, 1, 2, 3, 4, 5])
+np.in1d(arr1, arr2)
+# Out: array([ True,  True,  True,  True,  True,  True,  True,  True, False])
+np.setdiff1d(arr1, arr2)
+# Out: array([0])
 ```
 
 
 
 ### 文件读写
 
+NumPy拥有自己的文件读写函数。
+
+通过save(), load(), savez(), savez_compressed()可以进行基本的读写。其中savez类似于dict，而compressed进行了压缩。
+
+```python
+arr = np.arange(5)
+np.save('some_array', arr)
+np.load('some_array.npy')
+np.savez('array_archive.npz', a=arr, b=arr)
+arch = np.load('array_archive.npz')
+arch['b']
+# Out: array([0, 1, 2, 3, 4, 5])
+np.savez_compressed('arrays_compressed.npz', a=arr, b=arr)
+```
+
+```python
+# ----- Day 11 -----
+```
+
 
 
 ### 线性代数
 
+在NumPy中，$*$并不能进行矩阵乘法，而是单纯地将各个位置上的元素相乘。进行点乘需要使用dot()。
+
+```python
+x = np.array([[2, 3],
+              [0, 1]])
+y = np.array([[0, 1],
+              [1, 0]])
+x * y
+'''
+Out:
+array([[0, 3],
+       [0, 0]])
+'''
+x.dot(y)
+'''
+Out:
+array([[3, 2],
+       [1, 0]])
+'''
+```
+
+另外，在点乘中一个二维矩阵和一个一维数组相乘，后者会被转化成向量，并返回一个一维数组。这个操作也可以用运算符$@$实现。
+
+```python
+x.dot(np.array([1, 2]))
+# Out: array([8, 2])
+x @ np.array([2, 1])
+# Out: array([7, 1])
+```
+
+numpy.linalg拥有许多常用函数，比如inv(), qr()用来获得逆矩阵和QR分解。
+
+```python
+from numpy.linalg import inv, qr
+x_ = inv(x)
+x_
+'''
+Out:
+array([[ 0.5, -1.5],
+       [ 0. ,  1. ]])
+'''
+mat = np.random.randn(3, 3)
+q, r = qr(mat)
+r
+'''
+Out:
+array([[ 0.79869179,  1.18877944,  0.19382584],
+       [ 0.        , -2.24303773,  0.08872422],
+       [ 0.        ,  0.        ,  0.86608074]])
+'''
+```
+
+trace()获得矩阵的迹，而diag()对于二维矩阵可以获取对角线元素，对于一维数组则会创建对应的对角阵。
+
+```python
+x.trace()
+# Out: 3
+np.diag(x)
+# Out: array([2, 1])
+np.diag(np.diag(x))
+'''
+Out:
+array([[2, 0],
+       [0, 1]])
+'''
+```
+
+linalg.det()用来计算array的行列式，但要求最后两个维度大小相同。
+
+linalg.eig()用来计算矩阵的特征值和特征向量。
+
+```python
+from numpy.linalg import eig
+w, v = eig(np.diag((1, 2, 3)))
+w
+# Out: array([1., 2., 3.])
+v
+'''
+Out:
+array([[1., 0., 0.],
+       [0., 1., 0.],
+       [0., 0., 1.]])
+'''
+```
+
+linalg.pinv()用来计算Moore-Penrose广义逆矩阵。
+
+linalg.svd()对矩阵进行奇异值分解，返回三个分解矩阵。
+
+linalg.solve()解线性方程组。
+
+linalg.lstsq()求最小二乘解，返回解向量，残差和，秩，奇异值。
+
+```python
+x = np.array([[1, 2, 1],
+              [1, 0, 0],
+              [0, 4, 0]])
+pinv(x)
+'''
+Out:
+array([[ 2.06415723e-16,  1.00000000e+00, -2.86157572e-16],
+       [ 1.18467981e-16, -1.07459905e-16,  2.50000000e-01],
+       [ 1.00000000e+00, -1.00000000e+00, -5.00000000e-01]])
+'''
+svd(x)
+'''
+Out:
+(array([[-0.4856289 , -0.70136375, -0.52177912],
+        [-0.02497309, -0.58551396,  0.81027757],
+        [-0.87380828,  0.40652464,  0.26682728]]),
+ array([4.52173541, 1.48251813, 0.59669834]),
+ array([[-0.11292169, -0.98778246, -0.10739879],
+        [-0.86803506,  0.15067004, -0.4730895 ],
+        [ 0.48349129,  0.03980385, -0.87444373]]))
+'''
+solve(x, np.array([1, 1, 1]))
+# Out: array([ 1.  ,  0.25, -0.5 ])
+x = np.array([[1, 2],
+              [1, 0],
+              [0, 4]])
+lstsq(x, np.array([1, 1, 1]), rcond=None)
+'''
+Out:
+(array([0.77777778, 0.22222222]),
+ array([0.11111111]),
+ 2,
+ array([4.49661478, 1.33433712]))
+'''
+```
+
+```python
+# ----- Day 12 -----
+```
+
 
 
 ### 伪随机数的产生
+
+NumPy有许多的随机数生成器，比如可以用normal()来生成正态分布。
+
+```python
+sample = np.random.normal(size=(3, 3))
+```
+
+通过normal()生成的一系列随机数速度很快，比逐个生成要快很多。
+
+```python
+from random import normalvariate
+N = 1000000
+%timeit samples = [normalvariate(0, 1) for _ in range(N)]
+%timeit np.random.normal(size=N)
+'''
+Out:
+882 ms ± 24.3 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+38.1 ms ± 449 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+'''
+```
+
+另外可以通过seed()改变随机种子，RandomState()来创建局部随机生成器。
+
+```python
+np.random.seed(123)
+sample = np.random.RandomState(123)
+sample.randn(5)
+# Out: array([-1.0856306 ,  0.99734545,  0.2829785 , -1.50629471, -0.57860025])
+```
+
+permutation()和shuffle()都可以用来打乱array，多维数组则只打乱第一维。
+
+但前者还能传入int，相当于随机打乱arange()。而且前者返回一个打乱后的副本，后者会直接改变array并且返回None。
+
+```python
+sample = np.array([[1, 2, 3],
+                   [4, 5, 6],
+                   [7, 8, 9]])
+np.random.permutation(sample)
+'''
+Out:
+array([[4, 5, 6],
+       [7, 8, 9],
+       [1, 2, 3]])
+'''
+sample
+'''
+Out:
+array([[1, 2, 3],
+       [4, 5, 6],
+       [7, 8, 9]])
+'''
+np.random.shuffle(sample)
+sample
+'''
+Out:
+array([[4, 5, 6],
+       [1, 2, 3],
+       [7, 8, 9]])
+'''
+sample = np.random.permutation(5)
+sample
+# Out: array([0, 4, 2, 3, 1])
+```
+
+rand()返回$[0,1)$上的均匀随机变量。而randint()得到$[0,low)$或者$[low, high)$的随机整数。randn返回标准正态随机变量。
+
+还有一些常见的分布函数如下：
+
+```python
+# uniform(low=0.0, high=1.0, size=None)
+# 均匀分布
+# binomial(n, p, size=None)
+# 二项分布
+# negative_binomial(n, p, size=None)
+# 负二项分布
+# multinomial(n, pvals, size=None)
+# 多项分布
+# normal(loc=0.0, scale=1.0, size=None)
+# 正态分布
+# standard_normal(size=None)
+# 标准正态分布
+# lognormal(mean=0.0, sigma=1.0, size=None)
+# 对数正态分布
+# multivariate_normal(mean, cov[, size, check_valid, tol])
+# 多元正态分布
+# wald(mean, scale, size=None)
+# 逆高斯分布
+# poisson(lam=1.0, size=None)
+# 泊松分布
+# exponential(scale=1.0, size=None)
+# 指数分布
+# standard_exponential(size=None)
+# 标准指数分布
+# beta(a, b, size=None)
+# β分布
+# gamma(shape, scale=1.0, size=None)
+# Γ分布
+# standard_gamma(shape, size=None)
+# 标准Γ分布
+# chisquare(df, size=None)
+# 卡方分布
+# standard_t(df, size=None)
+# 标准t分布
+# f(dfnum, dfden, size=None)
+# F分布
+# noncentral_chisquare(df, nonc, size=None)
+# 非中心卡方分布
+# noncentral_f(dfnum, dfden, nonc, size=None)
+# 非中心F分布
+# geometric(p, size=None)
+# 几何分布
+# hypergeometric(ngood, nbad, nsample, size=None)
+# 超几何分布
+# pareto(a, size=None)
+# 帕累托分布
+# dirichlet(alpha, size=None)
+# 狄利克雷分布
+# gumbel(loc=0.0, scale=1.0, size=None)
+# Gumbel分布(极值分布)
+# laplace(loc=0.0, scale=1.0, size=None)
+# 拉普拉斯分布
+# logistic(loc=0.0, scale=1.0, size=None)
+# Logistic分布
+# rayleigh(scale=1.0, size=None)
+# 瑞利分布
+# standard_cauchy(size=None)
+# 标准柯西分布
+# triangular(left, mode, right, size=None)
+# 三角分布
+# weibull(a, size=None)
+# 韦布尔分布
+# zipf(a, size=None)
+# ζ分布
+```
+
+```python
+# ----- Day 13 -----
+```
 
 
 
