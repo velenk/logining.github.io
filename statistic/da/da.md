@@ -1711,7 +1711,7 @@ Out:
 
 
 
-### 伪随机数的产生
+### Random库
 
 NumPy有许多的随机数生成器，比如可以用normal()来生成正态分布。
 
@@ -1854,8 +1854,370 @@ rand()返回$[0,1)$上的均匀随机变量。而randint()得到$[0,low)$或者$
 
 
 
-### 样例：随机游动
-
-
-
 ## Pandas库
+
+
+
+### Series
+
+import加载库，同时加载最常使用的数据结构。
+
+```python
+import pandas as pd
+from pandas import Series, DataFrame
+```
+
+Series是一维的object，类似于一维数组。
+
+```python
+obj = pd.Series([2, 4, -1, 0])
+obj
+'''
+Out:
+0    2
+1    4
+2   -1
+3    0
+dtype: int64
+'''
+obj.values
+# Out: array([ 2,  4, -1,  0], dtype=int64)
+obj.index
+# Out: RangeIndex(start=0, stop=4, step=1)
+```
+
+但除了默认range之外，还可以自由指定index参数。同理可以通过自定义的index访问。
+
+```python
+obj2 = pd.Series([2, 4, -1, 0], index=['a', 'c', 'b', 'd'])
+obj2
+'''
+Out:
+a    2
+c    4
+b   -1
+d    0
+dtype: int64
+'''
+obj2['b']
+# Out: -1
+obj2['c'] = 5
+obj2[['a', 'b', 'c']]
+'''
+Out:
+a    2
+b   -1
+c    5
+dtype: int64
+'''
+```
+
+pandas使用了很多NumPy和SciPy的功能，因而对于Series我们可以使用类NumPy的功能。
+
+```python
+obj2[obj2 > 0]
+'''
+Out:
+a    2
+c    5
+dtype: int64
+'''
+obj2 * 2
+'''
+Out:
+a     4
+c    10
+b    -2
+d     0
+dtype: int64
+'''
+np.exp(obj2)
+'''
+Out:
+a      7.389056
+c    148.413159
+b      0.367879
+d      1.000000
+dtype: float64
+'''
+```
+
+同时也可以把Series看作一个顺序的dict，因而也有相关的操作。既可以直接将整个dict转化为Series，也可以通过index查找建立。
+
+```python
+'b' in obj2
+# Out: True
+sdata = {'A':86, 'B':54, 'XXX':98}
+obj3 = pd.Series(sdata)
+obj3
+'''
+Out:
+A      86
+B      54
+XXX    98
+dtype: int64
+'''
+names = ['XXX', 'A', 'C']
+obj4 = pd.Series(sdata, index=names)
+obj4
+'''
+Out:
+XXX    98.0
+A      86.0
+C       NaN
+dtype: float64
+'''
+```
+
+isnull()和notnull()可以用来检查missing data。
+
+```python
+pd.isnull(obj4)
+'''
+Out:
+XXX    False
+A      False
+C       True
+dtype: bool
+'''
+```
+
+Series之间可以直接用$+$合并。
+
+```python
+obj3 + obj4
+'''
+Out:
+A      172.0
+B        NaN
+C        NaN
+XXX    196.0
+dtype: float64
+'''
+```
+
+Series及其index有着独立的名称属性。同时index可以被直接整体替换。
+
+```python
+obj4.name = 'Score'
+obj4.index.name = 'name'
+obj4
+'''
+Out:
+name
+XXX    98.0
+A      86.0
+C       NaN
+Name: Score, dtype: float64
+'''
+obj4.index = [1, 2, 3]
+obj4
+'''
+Out:
+1    98.0
+2    86.0
+3     NaN
+Name: Score, dtype: float64
+'''
+```
+
+```python
+# ----- Day 14 -----
+```
+
+
+
+### DataFrame
+
+DataFrame提供了一种类似于Excel的数据结构，可以看作是一个关于Series的dict。而且虽然DataFrame是二维的数据结构，你依然可以用高级技巧来表示高维数据。
+
+最常见的创建DataFrame的方式是用一个dict，其中包含长度相同的list或者array。
+
+```python
+data = {'state': ['Ohio', 'Ohio', 'Ohio', 'Nevada', 'Nevada', 'Nevada'],
+        'year': [2000, 2001, 2002, 2001, 2002, 2003],
+        'pop': [1.5, 1.7, 3.6, 2.4, 2.9, 3.2]}
+frame = pd.DataFrame(data)
+frame
+'''
+Out:
+	state	year	pop
+0	Ohio	2000	1.5
+1	Ohio	2001	1.7
+2	Ohio	2002	3.6
+3	Nevada	2001	2.4
+4	Nevada	2002	2.9
+5	Nevada	2003	3.2
+'''
+```
+
+对于一个较大的DataFrame，可以用head()来显示前五项。
+
+利用columns参数可以指定各列的顺序。
+
+```python
+pd.DataFrame(data, columns=['year', 'state', 'pop'])
+'''
+Out:
+	year	state	pop
+0	2000	Ohio	1.5
+1	2001	Ohio	1.7
+2	2002	Ohio	3.6
+3	2001	Nevada	2.4
+4	2002	Nevada	2.9
+5	2003	Nevada	3.2
+'''
+```
+
+我们也可以在创建时指定column，但不存在的参数会被设为missing data。
+
+```python
+frame2 = pd.DataFrame(data, 
+                      columns=['year', 'state', 'pop', 'debt'],
+                      index=['one', 'two', 'three', 'four', 'five', 'six'])
+frame2
+'''
+Out:
+		year	state	pop	debt
+one		2000	Ohio	1.5	NaN
+two		2001	Ohio	1.7	NaN
+three	2002	Ohio	3.6	NaN
+four	2001	Nevada	2.4	NaN
+five	2002	Nevada	2.9	NaN
+six		2003	Nevada	3.2	NaN
+'''
+```
+
+我们可以访问DataFrame的单个列，返回Series。
+
+```python
+frame2['pop']
+'''
+Out:
+one      1.5
+two      1.7
+three    3.6
+four     2.4
+five     2.9
+six      3.2
+Name: pop, dtype: float64
+'''
+type(frame2.year)
+# Out: pandas.core.series.Series
+```
+
+要注意的是frame[column]对任何类型都合法，而frame.column只对合法的Python标识符有效。
+
+利用loc[row]可以得到某行数据。
+
+```python
+frame2.loc['three']
+'''
+Out:
+year     2002
+state    Ohio
+pop       3.6
+debt      NaN
+Name: three, dtype: object
+'''
+```
+
+我们可以对整一个column进行直接赋值。也可以导入Series，但导入Series后原本存在的数据也会被修改产生missing data。
+
+```python
+frame2['debt'] = 1
+frame2
+'''
+Out:
+		year	state	pop	debt
+one		2000	Ohio	1.5	1
+two		2001	Ohio	1.7	1
+three	2002	Ohio	3.6	1
+four	2001	Nevada	2.4	1
+five	2002	Nevada	2.9	1
+six		2003	Nevada	3.2	1
+'''
+frame2['debt'] = np.arange(6.)
+frame2
+'''
+Out:
+		year	state	pop	debt
+one		2000	Ohio	1.5	0.0
+two		2001	Ohio	1.7	1.0
+three	2002	Ohio	3.6	2.0
+four	2001	Nevada	2.4	3.0
+five	2002	Nevada	2.9	4.0
+six		2003	Nevada	3.2	5.0
+'''
+val = pd.Series([-1, 5, 4], index=['one', 'five', 'three'])
+frame2['debt'] = val
+frame2
+'''
+Out:
+		year	state	pop	debt
+one		2000	Ohio	1.5	-1.0
+two		2001	Ohio	1.7	NaN
+three	2002	Ohio	3.6	4.0
+four	2001	Nevada	2.4	NaN
+five	2002	Nevada	2.9	5.0
+six		2003	Nevada	3.2	NaN
+'''
+```
+
+用del可以删除column，也可以使用drop()。
+
+drop()默认用来删除行，需要使用axis=1来删除列。drop()返回副本，如果要在原DataFrame上操作，则使用参数inplace=True。
+
+```python
+del frame2['debt']
+frame2
+'''
+Out:
+		year	state	pop
+one		2000	Ohio	1.5
+two		2001	Ohio	1.7
+three	2002	Ohio	3.6
+four	2001	Nevada	2.4
+five	2002	Nevada	2.9
+six		2003	Nevada	3.2
+'''
+frame2.drop('state', axis=1)
+'''
+Out:
+		year	pop
+one		2000	1.5
+two		2001	1.7
+three	2002	3.6
+four	2001	2.4
+five	2002	2.9
+six		2003	3.2
+'''
+frame2.drop('six', inplace=True)
+frame2
+'''
+Out:
+		year	state	pop
+one		2000	Ohio	1.5
+two		2001	Ohio	1.7
+three	2002	Ohio	3.6
+four	2001	Nevada	2.4
+five	2002	Nevada	2.9
+'''
+```
+
+```python
+# ----- Day 15 -----
+```
+
+
+
+### 基本函数
+
+
+
+### 数据分析
+
+
+
+## 数据存储
+
