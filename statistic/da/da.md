@@ -2209,6 +2209,145 @@ five	2002	Nevada	2.9
 # ----- Day 15 -----
 ```
 
+我们也可以使用dict的dict来创建DataFrame。也可以在创建过程中指定index。
+
+也可以使用Series的dict来创建。
+
+```python
+pop = {'Nevada': {2001: 2.4, 2002: 2.9},
+       'Ohio': {2000: 1.5, 2001: 1.7, 2002: 3.6}}
+frame3 = pd.DataFrame(pop)
+frame3
+'''
+Out:
+		Nevada	Ohio
+2000	NaN		1.5
+2001	2.4		1.7
+2002	2.9		3.6
+'''
+pd.DataFrame(pop, index=pd.Series([2001, 2002, 2003]))
+'''
+Out:
+		Nevada	Ohio
+2001	2.4		1.7
+2002	2.9		3.6
+2003	NaN		NaN
+'''
+```
+
+对于DataFrame我们可以进行转置。
+
+```python
+frame3.T
+'''
+Out:
+		2000	2001	2002
+Nevada	NaN		2.4		2.9
+Ohio	1.5		1.7		3.6
+'''
+```
+
+我们可以设定DataFrame的index和columns的name。
+
+```python
+frame3.index.name = 'year'
+frame3.columns.name = 'state'
+frame3
+'''
+Out:
+state	Nevada	Ohio
+year		
+2000	NaN		1.5
+2001	2.4		1.7
+2002	2.9		3.6
+'''
+```
+
+values则会返回一个二维的array。
+
+```python
+frame3.values
+'''
+Out:
+array([[nan, 1.5],
+       [2.4, 1.7],
+       [2.9, 3.6]])
+'''
+```
+
+```python
+# ----- Day 16 -----
+```
+
+### index对象
+
+pandas库的index是一种单独的数据类型，能够进行许多操作。
+
+```python
+obj = pd.Series(range(3), index=['a', 'b', 'c'])
+obj
+'''
+Out:
+a    0
+b    1
+c    2
+dtype: int64
+'''
+index = obj.index
+index
+# Out: Index(['a', 'b', 'c'], dtype='object')
+```
+
+index类型属于顺序容器，可以区间读取。但不能进行修改，确保了index类型的安全性。
+
+```python
+index[:2]
+# Out: Index(['a', 'b'], dtype='object')
+```
+
+可以使用Index()将list或Series转化为index类型。但不同情况下的index可能不同，可以使用index参数来复制index。
+
+```python
+labels = pd.Index(np.arange(3))
+labels
+# Out: Int64Index([0, 1, 2], dtype='int64')
+obj2 = pd.Series(range(3), index=range(3))
+obj2.index
+# Out: RangeIndex(start=0, stop=3, step=1)
+obj2.index is labels
+# Out: False
+obj2.index = labels
+obj2.index is labels
+# Out: True
+```
+
+除了is之外，还可以使用in来对单独的值进行判断。
+
+```python
+'b' in obj.index
+# Out: True
+```
+
+另外，index类型虽然和set有很多类似操作，但却可以包含相同的值。而每次操作将会选中所有的相同值。
+
+常用方法有:
+
+append(), difference(), intersection(), union();
+
+isin()返回boolean数组;
+
+delete(), drop(), insert();其中delete()按照位置删除，drop()寻找指定元素删除。
+
+is_monotonic()判断index是否单调不减;
+
+is_unique();
+
+unique()返回一个unique的index。
+
+```python
+# ----- Day 17 -----
+```
+
 
 
 ### 基本函数
