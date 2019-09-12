@@ -2352,6 +2352,130 @@ unique()返回一个unique的index。
 
 ### 基本函数
 
+reindex()可以重新定义Series的索引顺序，并且可以使用method参数来控制缺失值的填充方式。ffill和bfill分别根据index的升序(而非实际的顺序)向前或向后填充。
+
+```python
+obj = pd.Series([3, 7 ,8 ,9], index=['a', 'b', 'c', 'e'])
+obj
+'''
+Out:
+a    3
+b    7
+c    8
+e    9
+dtype: int64
+'''
+obj.reindex(['b', 'c', 'd', 'e', 'f'])
+'''
+Out:
+b    7.0
+c    8.0
+d    NaN
+e    9.0
+f    NaN
+dtype: float64
+'''
+obj.reindex(['b', 'e', 'c', 'd', 'f'], method='ffill')
+'''
+Out:
+b    7
+e    9
+c    8
+d    8
+f    9
+dtype: int64
+'''
+obj.reindex(['b', 'e', 'c', 'd', 'f'], method='bfill')
+'''
+Out:
+b    7.0
+e    9.0
+c    8.0
+d    9.0
+f    NaN
+dtype: float64
+'''
+```
+
+类似的，reindex可以作用于DataFrame，但需要指定index或者columns。同时指定index和columns的情况也可以使用loc()来代替reindex。
+
+```python
+frame = pd.DataFrame(np.arange(9).reshape((3, 3)),
+                     index=['a', 'c', 'd'],
+                     columns=['Ohio', 'Texas', 'California'])
+frame
+'''
+Out:
+	Ohio	Texas	California
+a	0		1		2
+c	3		4		5
+d	6		7		8
+'''
+frame2 = frame.reindex(['a', 'b', 'c', 'd'])
+frame2
+'''
+Out:
+	Ohio	Texas	California
+a	0.0		1.0		2.0
+b	NaN		NaN		NaN
+c	3.0		4.0		5.0
+d	6.0		7.0		8.0
+'''
+states = ['Texas', 'Utah', 'California']
+frame.reindex(index=['a', 'b', 'c', 'd'], columns=states)
+'''
+Out:
+	Texas	Utah	California
+a	1.0		NaN		2.0
+b	NaN		NaN		NaN
+c	4.0		NaN		5.0
+d	7.0		NaN		8.0
+'''
+```
+
+可以通过fill_value参数来控制missing data的值，limit参数用来限制自动填充的最大长度，tolerance则表示填充间隔。
+
+level是reindex中最难以理解的一个参数，它表示多层索引上的简单索引匹配。
+
+要建立多层索引表，可以直接隐式构造。也可以通过MultiIndex显式构造。
+
+```python
+series1 = Series(np.random.randint(0,150,size=6),
+                index=[['a','a','b','b','c','c'],
+                       ['期中','期末','期中','期末','期中','期末']])
+series1
+'''
+Out:
+a  期中    123
+   期末      3
+b  期中     17
+   期末     80
+c  期中     88
+   期末    108
+dtype: int32
+'''
+frame1 = DataFrame(np.random.randint(0,150,size=(4,6)),
+                   index = list('ABCD'),
+                   columns=[['python','python','math','math','En','En'],
+                            ['期中','期末','期中','期末','期中','期末']])
+frame1
+'''
+Out:
+	python		math		En
+	期中	期末	期中	期末	期中	期末
+A	97	15		145	23		19	82
+B	67	18		138	116		139	78
+C	26	45		36	104		42	85
+D	64	107		119	24		11	97
+'''
+```
+
+不过不建议用多层索引，会带来很多不必要的麻烦。
+
+```python
+# ----- Day 18 -----
+```
+
 
 
 ### 数据分析
