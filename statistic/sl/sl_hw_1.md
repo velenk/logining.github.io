@@ -8,7 +8,15 @@
 
 ### 5）
 
+$\because \hat{\beta}=\displaystyle\frac{\sum x_i y_i}{\sum x_i^2} $
 
+$\therefore \hat{y}_i =\hat{\beta} x_i =\displaystyle\frac{x_i\sum x_j y_j }{\sum x_j^2} $
+
+$\therefore a_{i'}= \displaystyle\frac{x_i x_{i'} }{\sum x_i^2} $
+
+
+
+### 8)
 
 
 
